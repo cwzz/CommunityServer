@@ -4,6 +4,9 @@ import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.PostBLService;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.*;
+import com.nju.edu.community.vo.postvo.PostListItem;
+import com.nju.edu.community.vo.postvo.SearchReq;
+import javafx.scene.chart.ValueAxis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -23,14 +26,22 @@ public class PostController {
     @Autowired
     private PostBLService postBLService;
 
-
-    @RequestMapping(value = "/testtest")
+    @RequestMapping(value = "/getArticleList")
     public @ResponseBody
-    void testtest() throws IOException {
-        try {
-            postBLService.downLoadFromUrl("https://ipnet10.oss-cn-beijing.aliyuncs.com/20180902001530jane.txt");
-        } catch (Exception e) {
-        }
+    ArrayList<PostListItem> getArticleList(@RequestBody SearchReq searchReq){
+        System.out.println(searchReq.toString());
+        ArrayList<PostListItem> list=new ArrayList<>();
+        list.add(new PostListItem("postid1", true, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+                "王旭儿子", 666,100));
+        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+                "王旭儿子", 666,100));
+        list.add(new PostListItem("postid1", true, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+                "王旭儿子", 666,100));
+        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+                "王旭儿子", 666,100));
+        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+                "王旭儿子", 666,100));
+        return list;
     }
 
     @RequestMapping(value = "/changeBaseToUrl")
@@ -94,6 +105,7 @@ public class PostController {
     PostVO readArticle(@RequestParam String post_id, @RequestParam String reader) throws IOException {
         return postBLService.readArticle(post_id, reader);
     }
+
 
     @RequestMapping(value = "/readArticleList")
     public @ResponseBody
