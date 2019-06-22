@@ -1,0 +1,39 @@
+server:
+  port: 8000
+  charset: UTF-8
+debug: false
+constant:
+  codeLength: 6
+spring:
+  mail:
+    host: smtp.163.com
+    username: ipnet2018@163.com
+    password: ipnet2018
+    default-encoding: UTF-8
+  thymeleaf:
+    prefix: classpath:/templates/
+    suffix: .html
+    encoding: UTF-8
+    mode: HTML
+    cache: false
+    servlet:
+      content-type: text/html
+  resources:
+    static-locations: classpath:/static/
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: mysql
+    url: jdbc:mysql://120.79.232.126:3306/community?characterEncoding=UTF-8&useSSL=true
+  jpa:
+    database: mysql
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      naming:
+        implicit-strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
+    properties:
+      dialect: org.hibernate.dialect.MySQL5InnoDBDialect
+      hibernate:
+        enable_lazy_load_no_trans: true
+    open-in-view: true
