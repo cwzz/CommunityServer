@@ -24,11 +24,10 @@ public class UserBL implements UserBLService {
 
     @Override
     public ResultMessage getCode(String email){
+
         if(userDao.existsByEmail(email)>0){
             return ResultMessage.Exist;
         }
-
-
         String code=generateCode();
         User user =new User();
         user.setUid(email);

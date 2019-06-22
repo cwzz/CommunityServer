@@ -12,10 +12,10 @@ import javax.persistence.Table;
 import java.util.List;
 
 @Repository
-@Table(name = "com_user")
+@Table(name = "user")
 public interface UserDao extends JpaRepository<User,String> {
 
-    @Query("select count(u) from User u where u.uid=:username")
+    @Query("select count(u) from User u where u.uid=:username and u.active=true ")
     int existsByEmail(@Param("username")String username);
 
     @Query("select u from User u where u.uid=:username")

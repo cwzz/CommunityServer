@@ -1,5 +1,6 @@
 package com.nju.edu.community.blservice;
 
+import com.nju.edu.community.enums.PostCategory;
 import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.BriefPost;
@@ -13,7 +14,7 @@ import java.util.ArrayList;
 
 public interface PostBLService {
     String createID(String author);
-    ResultMessage publishArticle(String post_id, String author, String post_name, PostTag post_tag, String brief_intro, String content) throws IOException;
+    ResultMessage publishArticle(String postID, String author, String postTitle, PostCategory category,PostTag postTag, String briefIntro, String content) throws IOException;
     ResultMessage edit(String post_id, String post_name, PostTag post_tag, String content_url);
     ResultMessage deleteArticle(String post_id);
     ResultMessage remark(String post_id, String reviewer, String remark_content);

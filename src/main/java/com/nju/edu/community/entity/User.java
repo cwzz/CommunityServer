@@ -37,10 +37,10 @@ public class User {
 
     private int fansNum;//用户的粉丝数
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
     private List<Mine> mines;//与用户相关的帖子或用户的列表
 
-    @OneToMany(cascade = CascadeType.ALL,orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Record> history;//用户的浏览记录
 
 }

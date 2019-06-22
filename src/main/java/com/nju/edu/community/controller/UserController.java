@@ -32,6 +32,7 @@ public class UserController {
      */
     @RequestMapping(value = "/registerBack" , method = RequestMethod.POST)
     public @ResponseBody ResultMessage register(@RequestBody RegisterReq registerReq){
+        System.out.println(registerReq.toString());
         return userBLService.register(registerReq.getEmail(), registerReq.getPassword(), registerReq.getCode());
     }
 
@@ -46,7 +47,7 @@ public class UserController {
     /**
      * 忘记密码
      */
-    @RequestMapping(value = "/forgetPass")
+    @RequestMapping(value = "/forgetPass", method = RequestMethod.POST)
     public @ResponseBody ResultMessage forgetPass(@RequestBody EmailVO email){
         return userBLService.forgetPass(email.getEmail());
     }
@@ -54,7 +55,7 @@ public class UserController {
     /**
      * 获得用户头像
      */
-    @RequestMapping(value = "/getImageUrl")
+    @RequestMapping(value = "/getImageUrl", method = RequestMethod.POST)
     public @ResponseBody String resetPass(@RequestBody EmailVO email){
         return userBLService.getImageUrl(email.getEmail());
     }

@@ -1,5 +1,6 @@
 package com.nju.edu.community.bl;
 
+import com.nju.edu.community.enums.PostCategory;
 import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.CommunityUserBLService;
@@ -49,14 +50,14 @@ public class PostBL implements PostBLService {
     }
 
     private void saveAsFile(String content) throws IOException {
-        String savefile = "E:\\test.txt";
-        File file=new File(savefile);
+        String saveFile = "test.txt";
+        File file=new File(saveFile);
         if(!file.exists()){
             file.createNewFile();
         }
         FileWriter fwriter = null;
         try {
-            fwriter = new FileWriter(savefile);
+            fwriter = new FileWriter(saveFile);
             fwriter.write(content);
         } catch (IOException ex) {
             ex.printStackTrace();
@@ -98,27 +99,29 @@ public class PostBL implements PostBLService {
 
 
     @Override
-    public ResultMessage publishArticle(String post_id, String author, String post_name, PostTag post_tag, String brief_intro, String content) throws IOException {
-        this.saveAsFile(content);
-        File file=new File("E:\\test.txt");
+    public ResultMessage publishArticle(String postID, String author, String postTitle, PostCategory category,
+                                        PostTag postTag, String briefIntro, String content) throws IOException {
+//        this.saveAsFile(content);
+        File file=new File("test.txt");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("file", file.getName(), "text/plain",input);
-        String content_url=uploadFile(post_id,multipartFile);
-        Post post=postDao.getOne(post_id);
+        String content_url=uploadFile(postID,multipartFile);
+        Post post=postDao.getOne(postID);
         post.setAuthor(author);
-        post.setTitle(post_name);
-        post.setPostTag(post_tag);
-        post.setBrief_intro(brief_intro);
+        post.setTitle(postTitle);
+        post.setCategory(category);
+        post.setPostTag(postTag);
+        post.setBrief_intro(briefIntro);
         post.setContentUrl(content_url);
-        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        String day=df.format(new Date());
-        post.setPublishTime(0);
+//        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm");
+//        String day=df.format(new Date());
+        post.setPublishTime(new Date().getTime());
         post.setVisits(0);
         post.setRemarkNum(0);
         post.setRemarkList(new ArrayList<>());
         post.setState(PostState.Published);
         postDao.save(post);
-        communityUserBLService.releasePost(author,post_id);
+        communityUserBLService.releasePost(author,postID);
         return ResultMessage.Success;
     }
 

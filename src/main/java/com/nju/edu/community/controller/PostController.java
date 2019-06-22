@@ -41,9 +41,7 @@ public class PostController {
 
     /**
      * @param file 上传的文件
-     * @return
      */
-
     @RequestMapping("/upLoadFile")
     public @ResponseBody
     String upLoadFile(MultipartFile file) {
@@ -60,11 +58,17 @@ public class PostController {
         return postBLService.createID(author);
     }
 
+    /**
+     * 发表文章
+     * @param publishArticleVO
+     * @return
+     * @throws IOException
+     */
     @RequestMapping(value = "/publishArticle")
     public @ResponseBody
     ResultMessage publishArticle(@RequestBody PublishArticleVO publishArticleVO) throws IOException {
-        System.err.println(publishArticleVO.getPost_id() + "77777777777");
-        return postBLService.publishArticle(publishArticleVO.getPost_id(), publishArticleVO.getAuthor(), publishArticleVO.getPost_name(), publishArticleVO.getPost_tag(), publishArticleVO.getBrief_intro(), publishArticleVO.getContent());
+        System.err.println("新发布的文章ID："+publishArticleVO.getPostId());
+        return postBLService.publishArticle(publishArticleVO.getPostId(), publishArticleVO.getAuthor(), publishArticleVO.getPostTitle(), publishArticleVO.getCategory(),publishArticleVO.getPostTag(), publishArticleVO.getBriefIntro(), publishArticleVO.getContent());
     }
 
     @RequestMapping(value = "/editArticle")

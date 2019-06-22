@@ -5,6 +5,7 @@ import com.nju.edu.community.enums.PostState;
 import com.nju.edu.community.enums.PostTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
@@ -16,7 +17,7 @@ import java.util.List;
 @Entity
 @Table(name = "post")
 @AllArgsConstructor
-
+@NoArgsConstructor
 public class Post {
     @Id
     private String pid;//文章ID
@@ -42,23 +43,22 @@ public class Post {
     @OneToMany(cascade = CascadeType.ALL)
     private List<Remark> remarkList;//文章下的评论列表
 
-    public Post(){}
     public Post(String author){
-//        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
-//        String currentTime=df.format(new Date());// new Date()为获取当前系统时间
-        long currentTime=new Date().getTime();
+        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
+        String currentTime=df.format(new Date());// new Date()为获取当前系统时间
+//        long currentTime=new Date().getTime();
         this.pid =currentTime+author.substring(0,author.indexOf('@'));
         this.author=author;
         this.state=PostState.Draft;
     }
 
-    public Post(String pid, String author, String title, PostTag postTag, String brief_intro, String contentUrl){
-        this.pid = pid;
-        this.author=author;
-        this.title = title;
-        this.postTag = postTag;
-        this.brief_intro=brief_intro;
-        this.contentUrl = contentUrl;
-    }
+//    public Post(String pid, String author, String title, PostTag postTag, String brief_intro, String contentUrl){
+//        this.pid = pid;
+//        this.author=author;
+//        this.title = title;
+//        this.postTag = postTag;
+//        this.brief_intro=brief_intro;
+//        this.contentUrl = contentUrl;
+//    }
 
 }
