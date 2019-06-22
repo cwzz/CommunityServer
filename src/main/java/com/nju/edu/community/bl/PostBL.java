@@ -1,13 +1,14 @@
 package com.nju.edu.community.bl;
 
-import com.nju.edu.community.bl.ali.AliServiceImpl;
+import com.nju.edu.community.enums.PostTag;
+import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.blservice.PostBLService;
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.dao.PostDao;
 import com.nju.edu.community.entity.Post;
 import com.nju.edu.community.entity.Remark;
-import com.nju.edu.community.enums.Post_state;
+import com.nju.edu.community.enums.PostState;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.PostVO;
@@ -44,7 +45,7 @@ public class PostBL implements PostBLService {
     public String createID(String author) {
         Post post=new Post(author);
         postDao.save(post);
-        return post.getPost_id();
+        return post.getPid();
     }
 
     private void saveAsFile(String content) throws IOException {
@@ -97,7 +98,7 @@ public class PostBL implements PostBLService {
 
 
     @Override
-    public ResultMessage publishArticle(String post_id, String author, String post_name, ArrayList<String> post_tag, String brief_intro, String content) throws IOException {
+    public ResultMessage publishArticle(String post_id, String author, String post_name, PostTag post_tag, String brief_intro, String content) throws IOException {
         this.saveAsFile(content);
         File file=new File("E:\\test.txt");
         FileInputStream input = new FileInputStream(file);
@@ -105,17 +106,17 @@ public class PostBL implements PostBLService {
         String content_url=uploadFile(post_id,multipartFile);
         Post post=postDao.getOne(post_id);
         post.setAuthor(author);
-        post.setPost_name(post_name);
-        post.setPost_tag(post_tag);
+        post.setTitle(post_name);
+        post.setPostTag(post_tag);
         post.setBrief_intro(brief_intro);
-        post.setContent_url(content_url);
+        post.setContentUrl(content_url);
         SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm");
         String day=df.format(new Date());
-        post.setPublish_time(day);
+        post.setPublishTime(0);
         post.setVisits(0);
-        post.setRemark_num(0);
-        post.setRemark_content(new ArrayList<>());
-        post.setPost_state(Post_state.Published);
+        post.setRemarkNum(0);
+        post.setRemarkList(new ArrayList<>());
+        post.setState(PostState.Published);
         postDao.save(post);
         communityUserBLService.releasePost(author,post_id);
         return ResultMessage.Success;
@@ -124,11 +125,11 @@ public class PostBL implements PostBLService {
 
 
     @Override
-    public ResultMessage edit(String post_id, String post_name, ArrayList<String> post_tag, String content) {
+    public ResultMessage edit(String post_id, String post_name, PostTag post_tag, String content) {
         Post post=postDao.getOne(post_id);
-        post.setPost_name(post_name);
-        post.setPost_tag(post_tag);
-        post.setContent_url(content);
+        post.setTitle(post_name);
+        post.setPostTag(post_tag);
+        post.setContentUrl(content);
         postDao.save(post);
         return ResultMessage.Success;
     }
@@ -145,10 +146,10 @@ public class PostBL implements PostBLService {
     public ResultMessage remark(String post_id, String reviewer, String remark_content) {
         Remark remark=new Remark(post_id,reviewer,remark_content);
         Post post=postDao.getOne(post_id);
-        post.setRemark_num(post.getRemark_num()+1);
-        List<Remark> remarks=post.getRemark_content();
+        post.setRemarkNum(post.getRemarkNum()+1);
+        List<Remark> remarks=post.getRemarkList();
         remarks.add(remark);
-        post.setRemark_content(remarks);
+        post.setRemarkList(remarks);
         postDao.save(post);
         addRemarkNum(post_id);
         return ResultMessage.Success;
@@ -157,11 +158,11 @@ public class PostBL implements PostBLService {
     @Override
     public PostVO readArticle(String post_id, String reader) throws IOException {
         Post post=postDao.getOne(post_id);
-        String content=downLoadFromUrl(post.getContent_url());
-        PostVO postVO=new PostVO(post.getPost_id(),post.getAuthor(),post.getPost_name(),
-                new ArrayList<>(post.getPost_tag()),content,post.getPublish_time(),post.getVisits(),
-                post.getRemark_num(),post.getInterest_num(),new ArrayList<>(post.getRemark_content()));
-        communityUserBLService.browsePost(reader,post_id,post.getPost_name());
+        String content=downLoadFromUrl(post.getContentUrl());
+        PostVO postVO=new PostVO(post.getPid(),post.getAuthor(),post.getTitle(),
+                post.getPostTag(),content,post.getPublishTime(),post.getVisits(),
+                post.getRemarkNum(),post.getInterestNum(),new ArrayList<>(post.getRemarkList()));
+        communityUserBLService.browsePost(reader,post_id,post.getTitle());
         return postVO;
     }
 
@@ -192,7 +193,7 @@ public class PostBL implements PostBLService {
         ArrayList<RecordVO> res=new ArrayList<>();
         for(Post p:posts){
             if(!p.getAuthor().equals(author)){
-                recordVOS.add(new RecordVO(p.getPost_id(),p.getPost_name(),userBLService.getImageUrl(p.getAuthor())));
+                recordVOS.add(new RecordVO(p.getPid(),p.getTitle(),userBLService.getImageUrl(p.getAuthor())));
             }
         }
         Collections.shuffle(recordVOS);//打乱数组
@@ -220,7 +221,7 @@ public class PostBL implements PostBLService {
     @Override
     public ResultMessage addInterestNum(String post_id) {
         Post post=postDao.getOne(post_id);
-        post.setInterest_num(post.getInterest_num()+1);
+        post.setInterestNum(post.getInterestNum()+1);
         postDao.save(post);
         return ResultMessage.Success;
     }
@@ -228,7 +229,7 @@ public class PostBL implements PostBLService {
     @Override
     public ResultMessage minusInterestNum(String post_id) {
         Post post=postDao.getOne(post_id);
-        post.setInterest_num(post.getInterest_num()-1);
+        post.setInterestNum(post.getInterestNum()-1);
         postDao.save(post);
         return ResultMessage.Success;
     }
@@ -327,7 +328,7 @@ public class PostBL implements PostBLService {
 
     private ResultMessage addRemarkNum(String post_id) {
         Post post=postDao.getOne(post_id);
-        post.setRemark_num(post.getRemark_num()+1);
+        post.setRemarkNum(post.getRemarkNum()+1);
         postDao.save(post);
         return ResultMessage.Success;
     }

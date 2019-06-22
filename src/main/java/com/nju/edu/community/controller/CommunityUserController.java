@@ -1,7 +1,8 @@
 package com.nju.edu.community.controller;
 
 import com.nju.edu.community.blservice.CommunityUserBLService;
-import com.nju.edu.community.enums.Post_tag;
+import com.nju.edu.community.entity.Mine;
+import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.BriefUser;
 import com.nju.edu.community.vo.CUserVO;
@@ -51,7 +52,7 @@ public class CommunityUserController {
 
     @RequestMapping("/tag")
     public @ResponseBody
-    void modifyTags(String userID, ArrayList<Post_tag> tags){
+    void modifyTags(String userID, ArrayList<PostTag> tags){
         blService.modifyTag(userID,tags);
     }
 
@@ -95,11 +96,11 @@ public class CommunityUserController {
         return blService.getInterestedpost(userID);
     }
 
-    /*@RequestMapping("/getCollect")
+    @RequestMapping("/getCollect")
     public @ResponseBody
     List<Mine> getCollect(String userID){
         return blService.getCollected(userID);
-    }*/
+    }
 
     @RequestMapping("/getInterestedUser")
     public @ResponseBody

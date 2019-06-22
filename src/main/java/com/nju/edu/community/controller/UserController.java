@@ -3,6 +3,8 @@ package com.nju.edu.community.controller;
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.uservo.EmailVO;
+import com.nju.edu.community.vo.uservo.LoginReq;
+import com.nju.edu.community.vo.uservo.RegisterReq;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -16,8 +18,8 @@ public class UserController {
     @Autowired
     private UserBLService userBLService;
 
-    /*
-    获得验证码
+    /**
+     * 获取注册验证码
      */
     @RequestMapping(value = "/sendCode", method = RequestMethod.POST)
     public @ResponseBody
@@ -26,34 +28,36 @@ public class UserController {
     }
 
     /**
-     * sign up by email
-     * @param email 用户邮箱
-     * @param pass 密码
-     * @param code 验证码
-     * @return 注册结果
+     * 用户注册
      */
     @RequestMapping(value = "/registerBack" , method = RequestMethod.POST)
-    public @ResponseBody ResultMessage register(String email, String pass, String code){
-        return userBLService.register(email, pass, code);
+    public @ResponseBody ResultMessage register(@RequestBody RegisterReq registerReq){
+        return userBLService.register(registerReq.getEmail(), registerReq.getPassword(), registerReq.getCode());
     }
 
+    /**
+     * 用户登录
+     */
     @RequestMapping(value = "/loginBack", method = RequestMethod.POST)
-    public @ResponseBody ResultMessage login(String email, String pass){
-        return userBLService.login(email,pass);
+    public @ResponseBody ResultMessage login(@RequestBody LoginReq req){
+        return userBLService.login(req.getEmail(), req.getPassword());
     }
 
+    /**
+     * 忘记密码
+     */
     @RequestMapping(value = "/forgetPass")
-    public @ResponseBody ResultMessage forgetPass(String email){
-        return userBLService.forgetPass(email);
+    public @ResponseBody ResultMessage forgetPass(@RequestBody EmailVO email){
+        return userBLService.forgetPass(email.getEmail());
     }
 
-    @RequestMapping(value = "/resetPass")
-    public @ResponseBody ResultMessage resetPass(String email, String newPass, String code){
-        return userBLService.resetPassWhenForget(email, newPass, code);
+    /**
+     * 获得用户头像
+     */
+    @RequestMapping(value = "/getImageUrl")
+    public @ResponseBody String resetPass(@RequestBody EmailVO email){
+        return userBLService.getImageUrl(email.getEmail());
     }
-
-
-
 
 
 }

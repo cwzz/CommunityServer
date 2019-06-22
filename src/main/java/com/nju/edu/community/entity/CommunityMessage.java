@@ -6,7 +6,7 @@ import lombok.Data;
 import javax.persistence.*;
 
 @Data
-@Table(name = "com_message")
+@Table(name = "message")
 @Entity
 @AllArgsConstructor
 public class CommunityMessage {

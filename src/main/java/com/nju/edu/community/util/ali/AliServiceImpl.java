@@ -1,4 +1,4 @@
-package com.nju.edu.community.bl.ali;
+package com.nju.edu.community.util.ali;
 
 import com.aliyun.oss.OSSClient;
 import com.aliyun.oss.OSSException;
@@ -12,7 +12,6 @@ import com.aliyuncs.profile.DefaultProfile;
 import com.aliyuncs.profile.IClientProfile;
 import com.nju.edu.community.blservice.AliService;
 import com.nju.edu.community.enums.ResultMessage;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -1,5 +1,6 @@
 package com.nju.edu.community.vo;
 
+import com.nju.edu.community.enums.PostTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,6 +13,6 @@ import java.util.ArrayList;
 public class EditArticleVO {
     private String post_id;
     private String post_name;
-    private ArrayList<String> post_tag;
+    private PostTag post_tag;
     private String content;
 }

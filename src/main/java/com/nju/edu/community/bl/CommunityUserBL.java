@@ -4,11 +4,11 @@ import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.blservice.PostBLService;
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.dao.CommunityUserDao;
-import com.nju.edu.community.entity.CommunityUser;
+import com.nju.edu.community.entity.User;
 import com.nju.edu.community.entity.Mine;
 import com.nju.edu.community.entity.MineTag;
 import com.nju.edu.community.entity.Record;
-import com.nju.edu.community.enums.Post_tag;
+import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.BriefUser;
 import com.nju.edu.community.vo.CUserVO;
@@ -39,11 +39,11 @@ public class CommunityUserBL implements CommunityUserBLService {
     @Override
     public List<BriefUser> searchByKeyword(String keyword) {
         List<BriefUser> results=new ArrayList<>();
-        List<CommunityUser> users=communityUserDao.searchByKey(keyword);
+        List<User> users=communityUserDao.searchByKey(keyword);
         if(users!=null){
-            for(CommunityUser u:users){
+            for(User u:users){
                 BriefUser briefUser=(BriefUser)transHelper.transTO(u,BriefUser.class);
-                briefUser.setUrl(userBLService.getImageUrl(u.getUserid()));
+                briefUser.setUrl(userBLService.getImageUrl(u.getUid()));
                 results.add(briefUser);
             }
         }
@@ -52,7 +52,7 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public CUserVO getUserInfo(String userID) {
-        Optional<CommunityUser> user=communityUserDao.findById(userID);
+        Optional<User> user=communityUserDao.findById(userID);
         if(user.isPresent()){
             CUserVO cUserVO=(CUserVO) this.transHelper.transTO(user.get(),CUserVO.class);
             cUserVO.setMyTags(user.get().getTags().split(","));
@@ -68,9 +68,9 @@ public class CommunityUserBL implements CommunityUserBLService {
     }
 
     @Override
-    public void modifyTag(String username, ArrayList<Post_tag> tags) {
+    public void modifyTag(String username, ArrayList<PostTag> tags) {
         StringBuilder newSign= new StringBuilder();
-        for(Post_tag tag:tags){
+        for(PostTag tag:tags){
             newSign.append(tag.toString());
         }
         communityUserDao.modifyTag(username, newSign.toString());
@@ -78,10 +78,10 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public void releasePost(String username, String postID) {
-        Optional<CommunityUser> o_user=communityUserDao.findById(username);
+        Optional<User> o_user=communityUserDao.findById(username);
         if(o_user.isPresent()){
-            CommunityUser user=o_user.get();
-            user.setReleasedpost(user.getReleasedpost()+1);
+            User user=o_user.get();
+            user.setReleasedNum(user.getReleasedNum()+1);
             user.setMines(this.addMine(user.getMines(),postID,MineTag.Release));
             communityUserDao.saveAndFlush(user);
         }
@@ -89,10 +89,10 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public void interestPost(String username, String postID) {
-        Optional<CommunityUser> o_user=communityUserDao.findById(username);
+        Optional<User> o_user=communityUserDao.findById(username);
         if(o_user.isPresent()){
-            CommunityUser user=o_user.get();
-            user.setInterestedpost(user.getInterestedpost()+1);
+            User user=o_user.get();
+            user.setInterestNum(user.getInterestNum()+1);
             user.setMines(this.addMine(user.getMines(),postID,MineTag.InterestPost));
             postBLService.addInterestNum(postID);
             communityUserDao.saveAndFlush(user);
@@ -101,10 +101,10 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     /*@Override
     public void collectPost(String username, String postID) {
-        Optional<CommunityUser> o_user=communityUserDao.findById(username);
+        Optional<User> o_user=communityUserDao.findById(username);
         if(o_user.isPresent()){
-            CommunityUser user=o_user.get();
-            user.setCollectedpost(user.getCollectedpost()+1);
+            User user=o_user.get();
+            user.setCollectNum(user.getCollectNum()+1);
             user.setMines(this.addMine(user.getMines(),postID,MineTag.Collect));
             communityUserDao.saveAndFlush(user);
         }
@@ -112,18 +112,18 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public void interestUser(String starID, String fanID) {
-        Optional<CommunityUser> s_user=communityUserDao.findById(starID);
-        Optional<CommunityUser> f_user=communityUserDao.findById(fanID);
+        Optional<User> s_user=communityUserDao.findById(starID);
+        Optional<User> f_user=communityUserDao.findById(fanID);
         if(s_user.isPresent() && f_user.isPresent()){
             //被关注用户的粉丝数+1
-            CommunityUser star=s_user.get();
-            star.setFans(star.getFans()+1);
+            User star=s_user.get();
+            star.setFansNum(star.getFansNum()+1);
             star.setMines(this.addMine(star.getMines(),fanID, MineTag.Fan));
             communityUserDao.saveAndFlush(star);
 
             //粉丝的关注用户数+1
-            CommunityUser fan=f_user.get();
-            fan.setInteresteduser(fan.getInteresteduser()+1);
+            User fan=f_user.get();
+            fan.setInterestNum(fan.getInterestNum()+1);
             fan.setMines(this.addMine(fan.getMines(),starID,MineTag.InterestUser));
             communityUserDao.saveAndFlush(fan);
         }
@@ -138,10 +138,10 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public void deletePost(String username, String postID) {
-        Optional<CommunityUser> o_user=communityUserDao.findById(username);
+        Optional<User> o_user=communityUserDao.findById(username);
         if(o_user.isPresent()){
-            CommunityUser user=o_user.get();
-            user.setReleasedpost(user.getReleasedpost()-1);
+            User user=o_user.get();
+            user.setReleasedNum(user.getReleasedNum()-1);
             user.setMines(this.removeMine(user.getMines(),postID,MineTag.Release));
             communityUserDao.saveAndFlush(user);
         }
@@ -149,10 +149,10 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public void cancelInterest(String username, String postID) {
-        Optional<CommunityUser> o_user=communityUserDao.findById(username);
+        Optional<User> o_user=communityUserDao.findById(username);
         if(o_user.isPresent()){
-            CommunityUser user=o_user.get();
-            user.setInterestedpost(user.getInterestedpost()-1);
+            User user=o_user.get();
+            user.setInterestNum(user.getInterestNum()-1);
             user.setMines(this.removeMine(user.getMines(),postID,MineTag.InterestPost));
             postBLService.minusInterestNum(postID);
             communityUserDao.saveAndFlush(user);
@@ -161,10 +161,10 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     /*@Override
     public void cancelCollect(String username, String postID) {
-        Optional<CommunityUser> o_user=communityUserDao.findById(username);
+        Optional<User> o_user=communityUserDao.findById(username);
         if(o_user.isPresent()){
-            CommunityUser user=o_user.get();
-            user.setCollectedpost(user.getCollectedpost()-1);
+            User user=o_user.get();
+            user.setCollectNum(user.getCollectNum()-1);
             user.setMines(this.removeMine(user.getMines(),postID,MineTag.Collect));
             communityUserDao.saveAndFlush(user);
         }
@@ -172,17 +172,17 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public void cancelInterestUser(String starID, String fanID) {
-        Optional<CommunityUser> s_user=communityUserDao.findById(starID);
-        Optional<CommunityUser> f_user=communityUserDao.findById(fanID);
+        Optional<User> s_user=communityUserDao.findById(starID);
+        Optional<User> f_user=communityUserDao.findById(fanID);
         if(s_user.isPresent() && f_user.isPresent()){
             //被取关用户的粉丝数-1
-            CommunityUser star=s_user.get();
-            star.setFans(star.getFans()-1);
+            User star=s_user.get();
+            star.setFansNum(star.getFansNum()-1);
             star.setMines(this.removeMine(star.getMines(),fanID,MineTag.Fan));
             communityUserDao.saveAndFlush(star);
             //取消关注的用户关注用户列表-1
-            CommunityUser fan=f_user.get();
-            fan.setInteresteduser(fan.getInteresteduser()-1);
+            User fan=f_user.get();
+            fan.setInterestNum(fan.getInterestNum()-1);
             fan.setMines(this.removeMine(fan.getMines(),starID,MineTag.InterestUser));
             communityUserDao.saveAndFlush(fan);
         }
@@ -190,10 +190,10 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public void browsePost(String userID, String postID,String postname) {
-        Optional<CommunityUser> o_user=communityUserDao.findById(userID);
+        Optional<User> o_user=communityUserDao.findById(userID);
         boolean isExist=false;
         if(o_user.isPresent()){
-            CommunityUser user=o_user.get();
+            User user=o_user.get();
             List<Record> records=user.getHistory();
             for(Record record:records){
                 if(record.getPostid().equals(postID)){//浏览记录中已经存在的
@@ -261,7 +261,7 @@ public class CommunityUserBL implements CommunityUserBLService {
         List<Mine> mines=this.getMine(username,MineTag.InterestUser);
         List<BriefUser> users=new ArrayList<>();
         for(Mine mine:mines){
-            Optional<CommunityUser> user=communityUserDao.findById(mine.getTid());
+            Optional<User> user=communityUserDao.findById(mine.getTid());
             if(user.isPresent()){
                 BriefUser briefUser=(BriefUser) this.transHelper.transTO(user.get(),BriefUser.class);
                 briefUser.setUrl(userBLService.getImageUrl(mine.getTid()));
@@ -283,7 +283,7 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public List<RecordVO> getHistory(String userID){
-        Optional<CommunityUser> o_user=communityUserDao.findById(userID);
+        Optional<User> o_user=communityUserDao.findById(userID);
         List<RecordVO> results=new ArrayList<>();
         if(o_user.isPresent()){
             List<Record> records=o_user.get().getHistory();
@@ -296,6 +296,11 @@ public class CommunityUserBL implements CommunityUserBLService {
             }
             return results;
         }
+        return null;
+    }
+
+    @Override
+    public List<Mine> getCollected(String username) {
         return null;
     }
 }

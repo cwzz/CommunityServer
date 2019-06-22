@@ -1,6 +1,6 @@
 package com.nju.edu.community.controller;
 
-import com.nju.edu.community.bl.ali.AliServiceImpl;
+import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.PostBLService;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.*;
@@ -51,7 +51,9 @@ public class PostController {
         return postBLService.uploadFile(file.getName(), file);
     }
 
-
+    /**
+     * 发帖时先创建ID
+     */
     @RequestMapping(value = "/createPostID")
     public @ResponseBody
     String createPostID(@RequestParam String author) {

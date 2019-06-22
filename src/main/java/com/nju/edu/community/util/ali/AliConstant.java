@@ -1,4 +1,4 @@
-package com.nju.edu.community.bl.ali;
+package com.nju.edu.community.util.ali;
 
 /**
  * @Author:zhangping

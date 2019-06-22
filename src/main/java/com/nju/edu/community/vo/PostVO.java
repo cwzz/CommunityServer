@@ -2,6 +2,7 @@ package com.nju.edu.community.vo;
 
 import com.nju.edu.community.entity.Post;
 import com.nju.edu.community.entity.Remark;
+import com.nju.edu.community.enums.PostTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -13,9 +14,9 @@ public class PostVO {
     private String post_id;
     private String author;
     private String post_name;
-    private ArrayList<String> post_tag;
+    private PostTag post_tag;
     private String content;
-    private String publish_time;
+    private long publish_time;
     private long visits;
     private long remark_num;
     private long interest_num;//关注数
@@ -24,16 +25,16 @@ public class PostVO {
     public PostVO(){}
 
     public PostVO(Post post){
-        this.post_id=post.getPost_id();
+        this.post_id=post.getPid();
         this.author=post.getAuthor();
-        this.post_name=post.getPost_name();
-        this.post_tag=new ArrayList<>(post.getPost_tag());
-        this.content=post.getContent_url();
-        this.publish_time=post.getPublish_time();
+        this.post_name=post.getTitle();
+        this.post_tag=post.getPostTag();
+        this.content=post.getContentUrl();
+        this.publish_time=post.getPublishTime();
         this.visits=post.getVisits();
-        this.remark_num=post.getRemark_num();
-        this.interest_num=post.getInterest_num();
-        this.remark_content=new ArrayList<>(post.getRemark_content());
+        this.remark_num=post.getRemarkNum();
+        this.interest_num=post.getInterestNum();
+        this.remark_content=new ArrayList<>(post.getRemarkList());
     }
 
 

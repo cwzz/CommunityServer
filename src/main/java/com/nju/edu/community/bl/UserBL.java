@@ -2,7 +2,7 @@ package com.nju.edu.community.bl;
 
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.dao.CommunityUserDao;
-import com.nju.edu.community.entity.CommunityUser;
+import com.nju.edu.community.entity.User;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.util.MailUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +20,8 @@ public class UserBL implements UserBLService {
     @Value("${constant.codeLength}")
     private int codeLength;
 
+    private static final String defaultImageUrl="https://ipnet10.oss-cn-beijing.aliyuncs.com/ipnet/defaultImg.png";
+
     @Override
     public ResultMessage getCode(String email){
         if(userDao.existsByEmail(email)>0){
@@ -28,10 +30,11 @@ public class UserBL implements UserBLService {
 
 
         String code=generateCode();
-        CommunityUser user =new CommunityUser();
-        user.setUserid(email);
+        User user =new User();
+        user.setUid(email);
         user.setCode(code);
         user.setActive(false);
+        user.setImage(defaultImageUrl);
 
         new Thread( new MailUtil(email, code,true)).start();
 //        if(this.sendEmail(email,code)){
@@ -45,7 +48,7 @@ public class UserBL implements UserBLService {
     @Override
     @Transactional
     public ResultMessage register(String email,String password,String code) {
-        CommunityUser user=userDao.findByEmail(email);
+        User user=userDao.findByEmail(email);
         if (user==null){
             return ResultMessage.Fail;
         }
@@ -63,33 +66,9 @@ public class UserBL implements UserBLService {
         return ResultMessage.Fail;
     }
 
-    /*
-    @Override
-    public ResultMessage checkEmail(String email, String activeCode) {
-        Optional<CompanyUser> c_user= companyUserDao.findById(email);
-        Optional<PersonalUser> p_user= personalUserDao.findById(email);
-        if(c_user.isPresent()){
-            CompanyUser user=c_user.get();
-            if(user.getActiveCode().equals(activeCode)){
-                user.setActive(true);
-                companyUserDao.saveAndFlush(user);
-                return ResultMessage.Success;
-            }
-        }else if(p_user.isPresent()){
-            PersonalUser personalUser =p_user.get();
-            if(personalUser.getActiveCode().equals(activeCode)){
-                personalUser.setActive(true);
-                personalUserDao.saveAndFlush(personalUser);
-                return ResultMessage.Success;
-            }
-        }
-        return ResultMessage.Fail;
-    }
-    */
-
     @Override
     public ResultMessage login(String email, String password) {
-        CommunityUser user=userDao.findByEmail(email);
+        User user=userDao.findByEmail(email);
         if(user!=null && user.isActive() && user.getPassword().equals(password)){
             return ResultMessage.Success;
         }
@@ -98,7 +77,7 @@ public class UserBL implements UserBLService {
 
     @Override
     public ResultMessage forgetPass(String email){
-        CommunityUser user=userDao.findByEmail(email);
+        User user=userDao.findByEmail(email);
         if (user==null){
             return ResultMessage.NoUser;
         }
@@ -115,7 +94,7 @@ public class UserBL implements UserBLService {
 
     @Override
     public ResultMessage resetPassWhenForget(String email, String pass, String code) {
-        CommunityUser user=userDao.findByEmail(email);
+        User user=userDao.findByEmail(email);
         if (user.getCode().equals(code)){
             return ResultMessage.CodeError;
         }
@@ -126,19 +105,11 @@ public class UserBL implements UserBLService {
 
     @Override
     public String getImageUrl(String username) {
-
-//        String image=null;
-//        Optional<PersonalUser> person= personalUserDao.findById(username);
-//        Optional<CompanyUser> company= companyUserDao.findById(username);
-//        if(person.isPresent()){
-//            image=person.get().getImage();
-//        }else if(company.isPresent()){
-//            image=company.get().getImage();
-//        }
-//        if(image==null || image.equals("")){
-            return "https://ipnet10.oss-cn-beijing.aliyuncs.com/logo.jpg";
-//        }
-//        return image;
+        User user=userDao.findByEmail(username);
+        if (user==null){
+            return defaultImageUrl;
+        }
+        return user.getImage();
     }
 
     private String generateCode(){

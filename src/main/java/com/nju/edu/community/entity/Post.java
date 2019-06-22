@@ -1,8 +1,11 @@
 package com.nju.edu.community.entity;
 
-import com.nju.edu.community.enums.Post_state;
+import com.nju.edu.community.enums.PostCategory;
+import com.nju.edu.community.enums.PostState;
+import com.nju.edu.community.enums.PostTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
@@ -16,37 +19,46 @@ import java.util.List;
 
 public class Post {
     @Id
-    private String post_id;
-    private String author;
-    private String post_name;
-    @ElementCollection(targetClass =String .class,fetch = FetchType.LAZY)
-    private List<String> post_tag;
-    private Post_state post_state;
-    private String content_url;
-    private String brief_intro;
-    private String publish_time;
-    private long visits;
-    private long remark_num;
-    private long interest_num;//关注数
+    private String pid;//文章ID
+    private String author;//文章作者，邮箱号
+    private String title;//文章标题
+    private String brief_intro;//文章简介
+
+    @Enumerated(EnumType.STRING)
+    private PostCategory category;//文章分类
+
+    @Enumerated(EnumType.STRING)
+    private PostTag postTag;//文章标签
+
+    private PostState state;//文章的状态
+    private boolean setTop;//文章是否置顶
+    private String contentUrl;//文章内容URL,存储在OSS上
+
+    private long publishTime;//发布时间
+    private long visits;//浏览数
+    private long remarkNum;//评论数
+    private long interestNum;//被收藏的次数
+
     @OneToMany(cascade = CascadeType.ALL)
-    private List<Remark> remark_content;
+    private List<Remark> remarkList;//文章下的评论列表
 
     public Post(){}
     public Post(String author){
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
-        String currentTime=df.format(new Date());// new Date()为获取当前系统时间
-        this.post_id=currentTime+author;
+//        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
+//        String currentTime=df.format(new Date());// new Date()为获取当前系统时间
+        long currentTime=new Date().getTime();
+        this.pid =currentTime+author.substring(0,author.indexOf('@'));
         this.author=author;
-        this.post_state=Post_state.Draft;
+        this.state=PostState.Draft;
     }
 
-    public Post(String post_id, String author, String post_name, List<String> post_tag, String brief_intro,String content_url){
-        this.post_id=post_id;
+    public Post(String pid, String author, String title, PostTag postTag, String brief_intro, String contentUrl){
+        this.pid = pid;
         this.author=author;
-        this.post_name=post_name;
-        this.post_tag=post_tag;
+        this.title = title;
+        this.postTag = postTag;
         this.brief_intro=brief_intro;
-        this.content_url=content_url;
+        this.contentUrl = contentUrl;
     }
 
 }

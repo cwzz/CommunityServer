@@ -1,4 +1,4 @@
-package com.nju.edu.community.bl;
+package com.nju.edu.community.util;
 
 import org.springframework.stereotype.Service;
 
