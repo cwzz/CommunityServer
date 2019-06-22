@@ -15,7 +15,7 @@ public interface PostDao extends JpaRepository<Post,String> {
     @Query("select p from Post p where p.author=:author")
     ArrayList<Post> getPostByAuthor(@Param("author") String author);
 
-    @Query(value = "select p from Post p where p.getTitle like %?1%")
+    @Query(value = "select p from Post p where p.title like %?1%")
     ArrayList<Post> searchArticle(String keywords);
 
 }

@@ -13,29 +13,29 @@ import java.util.List;
 
 @Repository
 @Table(name = "com_user")
-public interface CommunityUserDao extends JpaRepository<User,String> {
+public interface UserDao extends JpaRepository<User,String> {
 
-    @Query("select count(c) from User c where c.getUid=:username")
+    @Query("select count(u) from User u where u.uid=:username")
     int existsByEmail(@Param("username")String username);
 
-    @Query("select u from User u where u.getUid=:username")
+    @Query("select u from User u where u.uid=:username")
     User findByEmail(@Param("username")String email);
 
     @Modifying
-    @Query("update User u set u.password=:pass,u.active=true where u.getUid=:id ")
+    @Query("update User u set u.password=:pass,u.active=true where u.uid=:id ")
     int activeUser(@Param("id") String email,@Param("pass") String pass);
 
     @Modifying
-    @Query(value = "update User c set c.nickname=:nickname where c.getUid=:username")
+    @Query(value = "update User u set u.uid=:nickname where u.uid=:username")
     void modifySignature(@Param("username") String username, @Param("nickname") String nickname);
 
     @Modifying
-    @Query(value = "update User c set c.tags=:newTag where c.getUid=:username")
+    @Query(value = "update User u set u.tags=:newTag where u.uid=:username")
     void modifyTag(@Param("username") String username, @Param("newTag") String newTag);
 
-    @Query(value = "select c.mines from User c where c.getUid=:username")
+    @Query(value = "select u.mines from User u where u.uid=:username")
     List<Mine> getMine(@Param("username") String username);
 
-    @Query(value = "select c from User c where c.nickname like %?1% or c.getUid like %?1%")
+    @Query(value = "select u from User u where u.nickname like %?1% or u.uid like %?1%")
     List<User> searchByKey(String keyword);
 }

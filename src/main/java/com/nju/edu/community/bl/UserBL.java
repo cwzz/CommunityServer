@@ -1,7 +1,7 @@
 package com.nju.edu.community.bl;
 
 import com.nju.edu.community.blservice.UserBLService;
-import com.nju.edu.community.dao.CommunityUserDao;
+import com.nju.edu.community.dao.UserDao;
 import com.nju.edu.community.entity.User;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.util.MailUtil;
@@ -15,7 +15,7 @@ import javax.transaction.Transactional;
 public class UserBL implements UserBLService {
 
     @Autowired
-    private CommunityUserDao userDao;
+    private UserDao userDao;
 
     @Value("${constant.codeLength}")
     private int codeLength;
