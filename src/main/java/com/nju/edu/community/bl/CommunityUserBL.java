@@ -91,6 +91,13 @@ public class CommunityUserBL implements CommunityUserBLService {
             //粉丝列表中添加一项
             NameAndImage nameAndImage=new NameAndImage(0,fansID,fan.getNickname(),fan.getImage(),starEachOther);
             beStarU.getFans().add(nameAndImage);
+            if (starEachOther){//如果star也关注了fan，那么star的关注列表中fan的状态要变化
+                for (NameAndImage n:beStarU.getInterestUser()){
+                    if (n.getEmail().equals(fansID)){
+                        n.setFollow(true);
+                    }
+                }
+            }
             userDao.saveAndFlush(beStarU);
 
             //粉丝的关注用户数+1
@@ -169,7 +176,7 @@ public class CommunityUserBL implements CommunityUserBLService {
     public List<PostListItem> getCollected(String username) {
         User user=userDao.findByEmail(username);
         if (user!=null){
-            ArrayList<String> collectPost=(ArrayList<String>) user.getCollectPost();
+            ArrayList<String> collectPost=new ArrayList<>(user.getCollectPost());
             return postBLService.getMyCollectPost(collectPost);
         }
         return null;
