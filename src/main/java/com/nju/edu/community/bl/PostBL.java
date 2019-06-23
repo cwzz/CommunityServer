@@ -50,7 +50,7 @@ public class PostBL implements PostBLService {
     }
 
     private void saveAsFile(String content) throws IOException {
-        String saveFile = "test.txt";
+        String saveFile = "D:\\test.txt";
         File file=new File(saveFile);
         if(!file.exists()){
             file.createNewFile();
@@ -101,8 +101,8 @@ public class PostBL implements PostBLService {
     @Override
     public ResultMessage publishArticle(String postID, String author, String postTitle, PostCategory category,
                                         PostTag postTag, String briefIntro, String content) throws IOException {
-//        this.saveAsFile(content);
-        File file=new File("test.txt");
+        this.saveAsFile(content);
+        File file=new File("D;\\test.txt");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("file", file.getName(), "text/plain",input);
         String content_url=uploadFile(postID,multipartFile);

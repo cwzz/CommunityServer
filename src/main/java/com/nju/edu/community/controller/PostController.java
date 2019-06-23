@@ -24,7 +24,7 @@ public class PostController {
     private PostBLService postBLService;
 
 
-    @RequestMapping(value = "/testtest")
+    @RequestMapping(value = "/testtest",method = RequestMethod.POST)
     public @ResponseBody
     void testtest() throws IOException {
         try {
@@ -33,7 +33,7 @@ public class PostController {
         }
     }
 
-    @RequestMapping(value = "/changeBaseToUrl")
+    @RequestMapping(value = "/changeBaseToUrl",method = RequestMethod.POST)
     public @ResponseBody
     String uploadPicture(@RequestParam String base64, @RequestParam String filename, @RequestParam String projectID) {
         return aliService.uploadPicture(projectID, filename, base64);
@@ -42,7 +42,7 @@ public class PostController {
     /**
      * @param file 上传的文件
      */
-    @RequestMapping("/upLoadFile")
+    @RequestMapping(value="/upLoadFile",method = RequestMethod.POST)
     public @ResponseBody
     String upLoadFile(MultipartFile file) {
         System.out.println(file.getOriginalFilename());
@@ -52,10 +52,13 @@ public class PostController {
     /**
      * 发帖时先创建ID
      */
-    @RequestMapping(value = "/createPostID")
+    @RequestMapping(value = "/createPostID",method = RequestMethod.POST)
     public @ResponseBody
-    String createPostID(@RequestParam String author) {
-        return postBLService.createID(author);
+    String createPostID(@RequestBody Author_name author) {
+        System.err.println("？？？？");
+        String s=postBLService.createID(author.getAuthor());
+        System.err.println("文章ID："+s);
+        return s;
     }
 
     /**
@@ -64,50 +67,51 @@ public class PostController {
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/publishArticle")
+    @RequestMapping(value = "/publishArticle",method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage publishArticle(@RequestBody PublishArticleVO publishArticleVO) throws IOException {
+        System.err.println("yes");
         System.err.println("新发布的文章ID："+publishArticleVO.getPostId());
         return postBLService.publishArticle(publishArticleVO.getPostId(), publishArticleVO.getAuthor(), publishArticleVO.getPostTitle(), publishArticleVO.getCategory(),publishArticleVO.getPostTag(), publishArticleVO.getBriefIntro(), publishArticleVO.getContent());
     }
 
-    @RequestMapping(value = "/editArticle")
+    @RequestMapping(value = "/editArticle",method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage editArticle(@RequestBody EditArticleVO editArticleVO) {
         return postBLService.edit(editArticleVO.getPost_id(), editArticleVO.getPost_name(), editArticleVO.getPost_tag(), editArticleVO.getContent());
     }
 
-    @RequestMapping(value = "/deleteArticle")
+    @RequestMapping(value = "/deleteArticle",method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage deleteArticle(@RequestParam String post_id) {
         return postBLService.deleteArticle(post_id);
     }
 
-    @RequestMapping(value = "/remark")
+    @RequestMapping(value = "/remark",method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage remark(@RequestParam String post_id, @RequestParam String reviewer, @RequestParam String remark_content) {
         return postBLService.remark(post_id, reviewer, remark_content);
     }
 
-    @RequestMapping(value = "/readArticle")
+    @RequestMapping(value = "/readArticle",method = RequestMethod.POST)
     public @ResponseBody
     PostVO readArticle(@RequestParam String post_id, @RequestParam String reader) throws IOException {
         return postBLService.readArticle(post_id, reader);
     }
 
-    @RequestMapping(value = "/readArticleList")
+    @RequestMapping(value = "/readArticleList",method = RequestMethod.POST)
     public @ResponseBody
     ArrayList<BriefPost> readArticleList(@RequestParam String author) {
         return postBLService.readArticleList(author);
     }
 
-    @RequestMapping(value = "/searchArticle")
+    @RequestMapping(value = "/searchArticle",method = RequestMethod.POST)
     public @ResponseBody
     ArrayList<BriefPost> searchArticle(@RequestParam String keywords) {
         return postBLService.searchArticle(keywords);
     }
 
-    @RequestMapping(value = "/getAllArticle")
+    @RequestMapping(value = "/getAllArticle",method = RequestMethod.POST)
     public @ResponseBody
     ArrayList<BriefPost> getAllArticle() {
         return postBLService.getAllArticleList();
