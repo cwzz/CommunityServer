@@ -4,7 +4,9 @@ import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.dao.UserDao;
 import com.nju.edu.community.entity.User;
 import com.nju.edu.community.enums.ResultMessage;
+import com.nju.edu.community.enums.Sex;
 import com.nju.edu.community.util.MailUtil;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -34,6 +36,11 @@ public class UserBL implements UserBLService {
         user.setCode(code);
         user.setActive(false);
         user.setImage(defaultImageUrl);
+        user.setSex(Sex.男);
+        user.setIntroduce("");
+        user.setBirthday("");
+        user.setNickname("");
+        user.setTags("");
 
         new Thread( new MailUtil(email, code,true)).start();
 //        if(this.sendEmail(email,code)){
@@ -92,23 +99,26 @@ public class UserBL implements UserBLService {
     }
 
     @Override
-    public ResultMessage resetPassWhenForget(String email, String pass, String code) {
-        User user=userDao.findByEmail(email);
-        if (user.getCode().equals(code)){
-            return ResultMessage.CodeError;
-        }
-        user.setPassword(pass);
-        userDao.save(user);
-        return ResultMessage.Success;
-    }
-
-    @Override
     public String getImageUrl(String username) {
         User user=userDao.findByEmail(username);
         if (user==null){
             return defaultImageUrl;
         }
         return user.getImage();
+    }
+
+    @Override
+    public UserInfoVO getUserInfo(String userID) {
+        User user= userDao.findByEmail(userID);
+        if(user!=null){
+            return new UserInfoVO(user);
+        }
+        return null;
+    }
+
+    @Override
+    public void modifyUserInfo(UserInfoVO userInfoVO){
+
     }
 
     private String generateCode(){

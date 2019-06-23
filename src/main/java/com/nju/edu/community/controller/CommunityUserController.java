@@ -2,17 +2,19 @@ package com.nju.edu.community.controller;
 
 import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.entity.Mine;
-import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.BriefUser;
-import com.nju.edu.community.vo.CUserVO;
+import com.nju.edu.community.vo.uservo.EmailVO;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 import com.nju.edu.community.vo.RecordVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 
@@ -22,6 +24,7 @@ public class CommunityUserController {
 
     @Autowired
     private CommunityUserBLService blService;
+
 
     @RequestMapping("/search")
     public @ResponseBody
@@ -36,25 +39,6 @@ public class CommunityUserController {
         blService.browsePost(browser,postid,postname);
     }*/
 
-//    @MyLog(value = "个人信息浏览")
-    @RequestMapping("/info")
-    public @ResponseBody
-    CUserVO getUserInfo(String userID){
-        return blService.getUserInfo(userID);
-    }
-
-//    @MyLog(value = "修改昵称")
-    @RequestMapping("/nickname")
-    public @ResponseBody
-    void modifyNickname(String userID,String newName){
-        blService.modifyNickname(userID,newName);
-    }
-
-    @RequestMapping("/tag")
-    public @ResponseBody
-    void modifyTags(String userID, ArrayList<PostTag> tags){
-        blService.modifyTag(userID,tags);
-    }
 
 //    @MyLog(value = "关注帖子")
     @RequestMapping("/interestpost")

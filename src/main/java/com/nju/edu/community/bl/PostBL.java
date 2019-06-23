@@ -1,7 +1,5 @@
 package com.nju.edu.community.bl;
 
-import com.nju.edu.community.enums.PostCategory;
-import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.blservice.PostBLService;
@@ -14,6 +12,7 @@ import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.PostVO;
 import com.nju.edu.community.vo.RecordVO;
+import com.nju.edu.community.vo.postvo.PostListItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
@@ -41,6 +40,29 @@ public class PostBL implements PostBLService {
 
     @Autowired
     private AliServiceImpl aliService;
+
+    @Override
+    public ArrayList<PostListItem> getArticleList(String category, String tag) {
+        ArrayList<Post> posts=new ArrayList<>();
+        if (category.equals("全部")&&tag.equals("全部")){
+            posts=postDao.searchAllArticle();
+        }else if (category.equals("全部")){
+            posts=postDao.searchArticleByCategory(category);
+        }else {
+            postDao.searchArticleByTag(category, tag);
+        }
+        ArrayList<PostListItem> list=new ArrayList<>();
+        boolean top=true;
+        int count=0;
+        for (Post post: posts){
+            if (count>5){
+                top=false;
+            }
+            list.add(new PostListItem(post, top));
+            count++;
+        }
+        return list;
+    }
 
     @Override
     public String createID(String author) {
@@ -99,10 +121,10 @@ public class PostBL implements PostBLService {
 
 
     @Override
-    public ResultMessage publishArticle(String postID, String author, String postTitle, PostCategory category,
-                                        PostTag postTag, String briefIntro, String content) throws IOException {
+    public ResultMessage publishArticle(String postID, String author, String postTitle, String category,
+                                        String postTag, String briefIntro, String content) throws IOException {
         this.saveAsFile(content);
-        File file=new File("D;\\test.txt");
+        File file=new File("test.txt");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("file", file.getName(), "text/plain",input);
         String content_url=uploadFile(postID,multipartFile);
@@ -128,7 +150,7 @@ public class PostBL implements PostBLService {
 
 
     @Override
-    public ResultMessage edit(String post_id, String post_name, PostTag post_tag, String content) {
+    public ResultMessage edit(String post_id, String post_name, String post_tag, String content) {
         Post post=postDao.getOne(post_id);
         post.setTitle(post_name);
         post.setPostTag(post_tag);

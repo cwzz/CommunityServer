@@ -1,5 +1,6 @@
 package com.nju.edu.community.entity;
 
+import com.nju.edu.community.enums.Sex;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -26,6 +27,13 @@ public class User {
     private String nickname;//用户的昵称
 
     private String image;//用户头像url
+
+    @Enumerated(EnumType.STRING)
+    private Sex sex;//性别
+
+    private String introduce;//个人简介
+
+    private String birthday;//生日
 
     private String tags;//用户的标签，感兴趣的方面？用逗号分隔
 

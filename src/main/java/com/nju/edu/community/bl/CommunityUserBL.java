@@ -8,10 +8,9 @@ import com.nju.edu.community.entity.User;
 import com.nju.edu.community.entity.Mine;
 import com.nju.edu.community.entity.MineTag;
 import com.nju.edu.community.entity.Record;
-import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.BriefUser;
-import com.nju.edu.community.vo.CUserVO;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 import com.nju.edu.community.vo.RecordVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,32 +47,6 @@ public class CommunityUserBL implements CommunityUserBLService {
             }
         }
         return results;
-    }
-
-    @Override
-    public CUserVO getUserInfo(String userID) {
-        Optional<User> user= userDao.findById(userID);
-        if(user.isPresent()){
-            CUserVO cUserVO=(CUserVO) this.transHelper.transTO(user.get(),CUserVO.class);
-            cUserVO.setMyTags(user.get().getTags().split(","));
-            cUserVO.setUrl(userBLService.getImageUrl(userID));
-            return cUserVO;
-        }
-        return null;
-    }
-
-    @Override
-    public void modifyNickname(String username, String signature) {
-        userDao.modifySignature(username,signature);
-    }
-
-    @Override
-    public void modifyTag(String username, ArrayList<PostTag> tags) {
-        StringBuilder newSign= new StringBuilder();
-        for(PostTag tag:tags){
-            newSign.append(tag.toString());
-        }
-        userDao.modifyTag(username, newSign.toString());
     }
 
     @Override

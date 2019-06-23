@@ -1,10 +1,12 @@
 package com.nju.edu.community.controller;
 
+import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.uservo.EmailVO;
 import com.nju.edu.community.vo.uservo.LoginReq;
 import com.nju.edu.community.vo.uservo.RegisterReq;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +19,9 @@ public class UserController {
 
     @Autowired
     private UserBLService userBLService;
+
+    @Autowired
+    private CommunityUserBLService communityUserBLService;
 
     /**
      * 获取注册验证码
@@ -60,5 +65,21 @@ public class UserController {
         return userBLService.getImageUrl(email.getEmail());
     }
 
+    /**
+     * 获得个人中心的信息
+     */
+    @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
+    public @ResponseBody
+    UserInfoVO getUserInfo(@RequestBody EmailVO email){
+        return userBLService.getUserInfo(email.getEmail());
+    }
 
+    /**
+     * 修改个人中心信息
+     */
+    @RequestMapping(value = "/modifyUserInfo", method = RequestMethod.POST)
+    public @ResponseBody
+    void modifyUserInfo(@RequestBody UserInfoVO userInfoVO){
+        userBLService.modifyUserInfo(userInfoVO);
+    }
 }

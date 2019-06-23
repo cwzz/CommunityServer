@@ -1,6 +1,7 @@
 package com.nju.edu.community.blservice;
 
 import com.nju.edu.community.enums.ResultMessage;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 
 
 public interface UserBLService {
@@ -16,10 +17,13 @@ public interface UserBLService {
     //忘记密码
     ResultMessage forgetPass(String email);
 
-    ResultMessage resetPassWhenForget(String email, String pass, String code);
-
     //获取用户的头像的url
     String getImageUrl(String username);
 
+    //获得用户的个人中心基本信息
+    UserInfoVO getUserInfo(String userID);
+
+    //修改用户个人中心信息
+    void modifyUserInfo(UserInfoVO userInfoVO);
 
 }
