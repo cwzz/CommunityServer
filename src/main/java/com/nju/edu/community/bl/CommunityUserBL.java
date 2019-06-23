@@ -2,23 +2,16 @@ package com.nju.edu.community.bl;
 
 import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.blservice.PostBLService;
-import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.dao.UserDao;
+import com.nju.edu.community.entity.NameAndImage;
 import com.nju.edu.community.entity.User;
-import com.nju.edu.community.entity.Mine;
-import com.nju.edu.community.entity.MineTag;
-import com.nju.edu.community.entity.Record;
-import com.nju.edu.community.vo.BriefPost;
-import com.nju.edu.community.vo.BriefUser;
+import com.nju.edu.community.vo.postvo.PostListItem;
 import com.nju.edu.community.vo.uservo.UserInfoVO;
-import com.nju.edu.community.vo.RecordVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,251 +22,156 @@ public class CommunityUserBL implements CommunityUserBLService {
     @Autowired
     private UserDao userDao;
     @Autowired
-    private TransHelper transHelper;
-    @Autowired
     private PostBLService postBLService;
-    @Autowired
-    private UserBLService userBLService;
-
     @Override
-    public List<BriefUser> searchByKeyword(String keyword) {
-        List<BriefUser> results=new ArrayList<>();
+    public List<UserInfoVO> searchByKeyword(String keyword) {
+        List<UserInfoVO> results=new ArrayList<>();
         List<User> users= userDao.searchByKey(keyword);
         if(users!=null){
             for(User u:users){
-                BriefUser briefUser=(BriefUser)transHelper.transTO(u,BriefUser.class);
-                briefUser.setUrl(userBLService.getImageUrl(u.getUid()));
-                results.add(briefUser);
+                results.add(new UserInfoVO(u));
             }
         }
         return results;
     }
 
     @Override
-    public void releasePost(String username, String postID) {
-        Optional<User> o_user= userDao.findById(username);
-        if(o_user.isPresent()){
-            User user=o_user.get();
-            user.setReleasedNum(user.getReleasedNum()+1);
-            user.setMines(this.addMine(user.getMines(),postID,MineTag.Release));
-            userDao.saveAndFlush(user);
-        }
+    public boolean judgeCollect(String user, String postID) {
+        List<String> collects=userDao.findByEmail(user).getCollectPost();
+        if (collects==null){
+            return false;
+        }else return collects.contains(postID);
     }
+
+    @Override
+    public boolean judgeStar(String currentUser, String user) {
+        return false;
+    }
+
 
     @Override
     public void interestPost(String username, String postID) {
         Optional<User> o_user= userDao.findById(username);
         if(o_user.isPresent()){
             User user=o_user.get();
-            user.setInterestNum(user.getInterestNum()+1);
-            user.setMines(this.addMine(user.getMines(),postID,MineTag.InterestPost));
+            List<String> collects=user.getCollectPost();
+            collects.add(postID);
+            user.setCollectPost(collects);
+            user.setCollectNum(user.getCollectNum()+1);
             postBLService.addInterestNum(postID);
             userDao.saveAndFlush(user);
         }
     }
 
-    /*@Override
-    public void collectPost(String username, String postID) {
-        Optional<User> o_user=communityUserDao.findById(username);
-        if(o_user.isPresent()){
-            User user=o_user.get();
-            user.setCollectNum(user.getCollectNum()+1);
-            user.setMines(this.addMine(user.getMines(),postID,MineTag.Collect));
-            communityUserDao.saveAndFlush(user);
+    @Override
+    public void cancelInterestPost(String username, String postID) {
+        User user=userDao.findByEmail(username);
+        if (user!=null){
+            List<String> collects=user.getCollectPost();
+            collects.remove(postID);
+            user.setCollectPost(collects);
+            user.setCollectNum(user.getCollectNum()-1);
+            userDao.saveAndFlush(user);
+            postBLService.minusInterestNum(postID);
         }
-    }*/
+    }
 
     @Override
-    public void interestUser(String starID, String fanID) {
-        Optional<User> s_user= userDao.findById(starID);
-        Optional<User> f_user= userDao.findById(fanID);
-        if(s_user.isPresent() && f_user.isPresent()){
+    public void starUser(String fansID, String beStaredID) {
+        Optional<User> beStarUser= userDao.findById(beStaredID);
+        Optional<User> f_user= userDao.findById(fansID);
+        if(beStarUser.isPresent() && f_user.isPresent()){
             //被关注用户的粉丝数+1
-            User star=s_user.get();
-            star.setFansNum(star.getFansNum()+1);
-            star.setMines(this.addMine(star.getMines(),fanID, MineTag.Fan));
-            userDao.saveAndFlush(star);
+            User beStarU=beStarUser.get();
+            User fan=f_user.get();
+
+            boolean starEachOther=exist(fansID, beStarU.getInterestUser());
+
+            beStarU.setFansNum(beStarU.getFansNum()+1);
+            //粉丝列表中添加一项
+            NameAndImage nameAndImage=new NameAndImage(0,fansID,fan.getNickname(),fan.getImage(),starEachOther);
+            beStarU.getFans().add(nameAndImage);
+            userDao.saveAndFlush(beStarU);
 
             //粉丝的关注用户数+1
-            User fan=f_user.get();
             fan.setInterestNum(fan.getInterestNum()+1);
-            fan.setMines(this.addMine(fan.getMines(),starID,MineTag.InterestUser));
+            //粉丝的关注列表添加一项
+            NameAndImage nameAndImage1=new NameAndImage(0,beStaredID,beStarU.getNickname(),beStarU.getImage(),starEachOther);
+            fan.getInterestUser().add(nameAndImage1);
             userDao.saveAndFlush(fan);
         }
     }
 
-    private List<Mine> addMine(List<Mine> mines, String toAddId, MineTag tag){
-        String time=new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
-        Mine newMine=new Mine(0,toAddId,time,tag);
-        mines.add(newMine);
-        return mines;
+    private boolean exist(String userID, List<NameAndImage> list){
+        for (NameAndImage nameAndImage:list){
+            if (nameAndImage.getEmail().equals(userID)){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    public void deletePost(String username, String postID) {
-        Optional<User> o_user= userDao.findById(username);
-        if(o_user.isPresent()){
-            User user=o_user.get();
-            user.setReleasedNum(user.getReleasedNum()-1);
-            user.setMines(this.removeMine(user.getMines(),postID,MineTag.Release));
-            userDao.saveAndFlush(user);
-        }
-    }
+    public void cancelStarUser(String fansID, String starID) {
+        Optional<User> fans= userDao.findById(fansID);
+        Optional<User> stars= userDao.findById(starID);
+        if(fans.isPresent() && stars.isPresent()){
+            User fan=fans.get();
+            User star=stars.get();
 
-    @Override
-    public void cancelInterest(String username, String postID) {
-        Optional<User> o_user= userDao.findById(username);
-        if(o_user.isPresent()){
-            User user=o_user.get();
-            user.setInterestNum(user.getInterestNum()-1);
-            user.setMines(this.removeMine(user.getMines(),postID,MineTag.InterestPost));
-            postBLService.minusInterestNum(postID);
-            userDao.saveAndFlush(user);
-        }
-    }
-
-    /*@Override
-    public void cancelCollect(String username, String postID) {
-        Optional<User> o_user=communityUserDao.findById(username);
-        if(o_user.isPresent()){
-            User user=o_user.get();
-            user.setCollectNum(user.getCollectNum()-1);
-            user.setMines(this.removeMine(user.getMines(),postID,MineTag.Collect));
-            communityUserDao.saveAndFlush(user);
-        }
-    }*/
-
-    @Override
-    public void cancelInterestUser(String starID, String fanID) {
-        Optional<User> s_user= userDao.findById(starID);
-        Optional<User> f_user= userDao.findById(fanID);
-        if(s_user.isPresent() && f_user.isPresent()){
-            //被取关用户的粉丝数-1
-            User star=s_user.get();
-            star.setFansNum(star.getFansNum()-1);
-            star.setMines(this.removeMine(star.getMines(),fanID,MineTag.Fan));
-            userDao.saveAndFlush(star);
-            //取消关注的用户关注用户列表-1
-            User fan=f_user.get();
+            //该粉丝的关注列表-1
             fan.setInterestNum(fan.getInterestNum()-1);
-            fan.setMines(this.removeMine(fan.getMines(),starID,MineTag.InterestUser));
-            userDao.saveAndFlush(fan);
-        }
-    }
-
-    @Override
-    public void browsePost(String userID, String postID,String postname) {
-        Optional<User> o_user= userDao.findById(userID);
-        boolean isExist=false;
-        if(o_user.isPresent()){
-            User user=o_user.get();
-            List<Record> records=user.getHistory();
-            for(Record record:records){
-                if(record.getPostid().equals(postID)){//浏览记录中已经存在的
-                    isExist=true;
-                    record.setTime(new Date());
+            List<NameAndImage> list1=fan.getInterestUser();
+            for (NameAndImage nameAndImage:list1){
+                if (nameAndImage.getEmail().equals(starID)){
+                    list1.remove(nameAndImage);
                     break;
                 }
             }
-            if (!isExist) {
-                if(records.size()>=7){
-                    //如果记录超过7条，找到最早的，移除
-                    int index=0;
-                    for(int i=1;i<records.size();i++){
-                        if(records.get(i).getTime().before(records.get(index).getTime())){
-                            index=i;
-                        }
-                    }
-                    records.remove(index);
+            fan.setInterestUser(list1);
+            userDao.saveAndFlush(fan);
+
+            //博主的粉丝数量-1
+            star.setFansNum(star.getFansNum()-1);
+            List<NameAndImage> list2=star.getFans();
+            for (NameAndImage nameAndImage:list2){
+                if (nameAndImage.getEmail().equals(fansID)){
+                    list2.remove(nameAndImage);
+                    break;
                 }
-                Record newRecord=new Record(0,postID,postname,new Date());
-                records.add(newRecord);
             }
-            user.setHistory(records);
-            userDao.saveAndFlush(user);
+            star.setFans(list2);
+            userDao.saveAndFlush(fan);
         }
-    }
-
-    private List<Mine> removeMine(List<Mine> mines,String toRemoveId,MineTag tag){
-        for(Mine mine:mines){
-            if(mine.getTag()==tag && mine.getTid().equals(toRemoveId)){
-                mines.remove(mine);
-                break;
-            }
-        }
-        return mines;
     }
 
     @Override
-    public List<BriefPost> getReleased(String username) {
-        List<BriefPost> posts=new ArrayList<>();
-        List<Mine> mines=this.getMine(username,MineTag.Release);
-        for(Mine mine:mines){
-            posts.add(postBLService.getBriefPostByID(mine.getTid()));
-        }
-        return posts;
+    public List<PostListItem> getReleased(String username) {
+        return postBLService.getMyRelease(username);
     }
 
     @Override
-    public List<BriefPost> getInterestedpost(String username) {
-        List<BriefPost> posts=new ArrayList<>();
-        List<Mine> mines=this.getMine(username,MineTag.InterestPost);
-        for(Mine mine:mines){
-            posts.add(postBLService.getBriefPostByID(mine.getTid()));
-        }
-        return posts;
-    }
-
-    /*@Override
-    public List<Mine> getCollected(String username) {
-        return this.getMine(username,MineTag.Collect);
-    }*/
-
-    @Override
-    public List<BriefUser> getInterestedUser(String username) {
-        List<Mine> mines=this.getMine(username,MineTag.InterestUser);
-        List<BriefUser> users=new ArrayList<>();
-        for(Mine mine:mines){
-            Optional<User> user= userDao.findById(mine.getTid());
-            if(user.isPresent()){
-                BriefUser briefUser=(BriefUser) this.transHelper.transTO(user.get(),BriefUser.class);
-                briefUser.setUrl(userBLService.getImageUrl(mine.getTid()));
-                users.add(briefUser);
-            }
-        }
-        return users;
-    }
-
-    private List<Mine> getMine(String username,MineTag tag){
-        List<Mine> result=new ArrayList<>();
-        for(Mine mine: userDao.getMine(username)){
-            if(mine.getTag()==tag){
-                result.add(mine);
-            }
-        }
-        return result;
+    public List<NameAndImage> getInterestedUser(String username) {
+        return userDao.findByEmail(username).getInterestUser();
     }
 
     @Override
-    public List<RecordVO> getHistory(String userID){
-        Optional<User> o_user= userDao.findById(userID);
-        List<RecordVO> results=new ArrayList<>();
-        if(o_user.isPresent()){
-            List<Record> records=o_user.get().getHistory();
-            for(Record record:records){
-                System.err.println(record.toString());
-                RecordVO temp=(RecordVO) transHelper.transTO(record,RecordVO.class);
-                temp.setUrl(userBLService.getImageUrl(record.getPostid().substring(14)));
-//                temp.setUrl(userBLService.getImageUrl(userID));
-                results.add(temp);
-            }
-            return results;
-        }
-        return null;
+    public List<NameAndImage> getFans(String userID) {
+        return userDao.findByEmail(userID).getFans();
     }
 
     @Override
-    public List<Mine> getCollected(String username) {
+    public void releasePost(String useID) {
+        userDao.releasePost(useID);
+    }
+
+    @Override
+    public List<PostListItem> getCollected(String username) {
+        User user=userDao.findByEmail(username);
+        if (user!=null){
+            ArrayList<String> collectPost=(ArrayList<String>) user.getCollectPost();
+            return postBLService.getMyCollectPost(collectPost);
+        }
         return null;
     }
 }

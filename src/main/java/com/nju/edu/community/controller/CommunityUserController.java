@@ -1,13 +1,16 @@
 package com.nju.edu.community.controller;
 
 import com.nju.edu.community.blservice.CommunityUserBLService;
-import com.nju.edu.community.entity.Mine;
-import com.nju.edu.community.vo.BriefPost;
-import com.nju.edu.community.vo.BriefUser;
-import com.nju.edu.community.vo.RecordVO;
+import com.nju.edu.community.entity.NameAndImage;
+import com.nju.edu.community.vo.StarVO;
+import com.nju.edu.community.vo.postvo.PostListItem;
+import com.nju.edu.community.vo.uservo.EmailVO;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -21,62 +24,98 @@ public class CommunityUserController {
 
     @RequestMapping("/search")
     public @ResponseBody
-    List<BriefUser> searchByKeyword(String keyword){
+    List<UserInfoVO> searchByKeyword(String keyword){
         return blService.searchByKeyword(keyword);
     }
 
-    @RequestMapping("/interestpost")
+    /**
+     * 得到当前用户是否收藏了这个帖子
+     */
+    @RequestMapping(value = "/judgeCollect", method = RequestMethod.POST)
     public @ResponseBody
-    void attentionPost(String userID,String postID){
-        blService.interestPost(userID,postID);
+    boolean judgeCollect(@RequestBody StarVO starVO){
+        return blService.judgeCollect(starVO.getCurrentUser(), starVO.getParam());
     }
 
-    @RequestMapping("/interestuser")
+    /**
+     * 得到当前用户是否关注了这个用户
+     */
+    @RequestMapping(value = "/judgeStar", method = RequestMethod.POST)
     public @ResponseBody
-    void attentionUser(String starID,String fanID){
-        blService.interestUser(starID,fanID);
+    boolean judgeStar(@RequestBody StarVO starVO){
+        return blService.judgeStar(starVO.getCurrentUser(), starVO.getParam());
     }
 
-    @RequestMapping("/uninterestpost")
+    /**
+     * 收藏帖子
+     */
+    @RequestMapping(value = "/collectPost", method = RequestMethod.POST)
     public @ResponseBody
-    void unInterestPost(String userID,String postID){
-        blService.cancelInterest(userID,postID);
+    void attentionPost(@RequestBody StarVO starVO){
+        blService.interestPost(starVO.getCurrentUser(),starVO.getParam());
     }
 
-    @RequestMapping("/uninterestuser")
+    /**
+     * 取消收藏帖子
+     */
+    @RequestMapping(value = "/cancelCollectPost", method = RequestMethod.POST)
     public @ResponseBody
-    void unInterestUser(String starID,String fanID){
-        blService.cancelInterestUser(starID,fanID);
+    void cancelAttentionPost(@RequestBody StarVO starVO){
+        blService.cancelInterestPost(starVO.getCurrentUser(), starVO.getParam());
     }
 
-    @RequestMapping("/getRelease")
+    /**
+     * 关注用户
+     */
+    @RequestMapping(value = "/starUser",method = RequestMethod.POST)
     public @ResponseBody
-    List<BriefPost> getRelease(String userID){
-        return blService.getReleased(userID);
+    void starUser(@RequestBody StarVO starVO){
+        blService.starUser(starVO.getCurrentUser(),starVO.getParam());
     }
 
-    @RequestMapping("/getInterestedPost")
+    /**
+     * 取消关注
+     */
+    @RequestMapping(value = "/cancelStarUser",method = RequestMethod.POST)
     public @ResponseBody
-    List<BriefPost> getInterestedPost(String userID){
-        return blService.getInterestedpost(userID);
+    void cancelStarUser(@RequestBody StarVO starVO){
+        blService.cancelStarUser(starVO.getCurrentUser(),starVO.getParam());
     }
 
-    @RequestMapping("/getCollect")
+    /**
+     * 获得我发布的帖子
+     */
+    @RequestMapping(value = "/getMyRelease",method = RequestMethod.POST)
     public @ResponseBody
-    List<Mine> getCollect(String userID){
-        return blService.getCollected(userID);
+    List<PostListItem> getMyReleasePost(@RequestBody EmailVO emailVO){
+        return blService.getReleased(emailVO.getEmail());
     }
 
-    @RequestMapping("/getInterestedUser")
+    /**
+     * 获得我收藏的帖子
+     */
+    @RequestMapping(value = "/getMyCollect", method = RequestMethod.POST)
     public @ResponseBody
-    List<BriefUser> getInterestedUser(String userID){
-        return blService.getInterestedUser(userID);
+    List<PostListItem> getMyCollectPost(@RequestBody EmailVO emailVO){
+        return blService.getCollected(emailVO.getEmail());
     }
 
-    @RequestMapping("/getHistory")
+    /**
+     * 获得我关注的人
+     */
+    @RequestMapping(value = "/getMyStarUser", method = RequestMethod.POST)
     public @ResponseBody
-    List<RecordVO> getHistory(String userID){
-        return blService.getHistory(userID);
+    List<NameAndImage> getInterestedUser(@RequestBody EmailVO emailVO){
+        return blService.getInterestedUser(emailVO.getEmail());
+    }
+
+    /**
+     * 获得我的粉丝
+     */
+    @RequestMapping(value = "/getMyFans", method = RequestMethod.POST)
+    public @ResponseBody
+    List<NameAndImage> getMyFans(@RequestBody EmailVO emailVO){
+        return blService.getFans(emailVO.getEmail());
     }
 
 }

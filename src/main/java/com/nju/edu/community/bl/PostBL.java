@@ -10,7 +10,6 @@ import com.nju.edu.community.entity.Post;
 import com.nju.edu.community.entity.Remark;
 import com.nju.edu.community.enums.PostState;
 import com.nju.edu.community.enums.ResultMessage;
-import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.postvo.PostVO;
 import com.nju.edu.community.vo.RecordVO;
 import com.nju.edu.community.vo.postvo.PostListItem;
@@ -20,6 +19,7 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -34,10 +34,10 @@ public class PostBL implements PostBLService {
     private PostDao postDao;
 
     @Autowired
-    private CommunityUserBLService communityUserBLService;
+    private UserBLService userBLService;
 
     @Autowired
-    private UserBLService userBLService;
+    private CommunityUserBLService communityUserBLService;
 
     @Autowired
     private AliServiceImpl aliService;
@@ -56,17 +56,31 @@ public class PostBL implements PostBLService {
             postDao.searchArticleByTag(category, tag);
         }
         ArrayList<PostListItem> list=new ArrayList<>();
-        boolean top=true;
-        int count=0;
         for (Post post: posts){
-            if (count>5){
-                top=false;
-            }
-            list.add(new PostListItem(post, top));
-            count++;
+            list.add(new PostListItem(post));
         }
         return list;
     }
+
+    @Override
+    public ArrayList<PostListItem> getMyRelease(String email){
+        ArrayList<Post> posts=postDao.getPostByAuthor(email);
+        ArrayList<PostListItem> results=new ArrayList<>();
+        for (Post post:posts){
+            results.add(new PostListItem(post));
+        }
+        return results;
+    }
+
+    @Override
+    public ArrayList<PostListItem> getMyCollectPost(ArrayList<String> postIds){
+        ArrayList<PostListItem> result=new ArrayList<>();
+        for (String s:postIds){
+            result.add(new PostListItem(postDao.getOne(s)));
+        }
+        return result;
+    }
+
 
     @Override
     public String createID(String author) {
@@ -146,8 +160,9 @@ public class PostBL implements PostBLService {
         post.setRemarkNum(0);
         post.setRemarkList(new ArrayList<>());
         post.setState(PostState.Published);
+        post.setSetTop(false);
         postDao.save(post);
-        communityUserBLService.releasePost(author,postID);
+        communityUserBLService.releasePost(author);
         return ResultMessage.Success;
     }
 
@@ -167,7 +182,7 @@ public class PostBL implements PostBLService {
     public ResultMessage deleteArticle(String post_id) {
         Post post=postDao.getOne(post_id);
         postDao.deleteById(post_id);
-        communityUserBLService.deletePost(post.getAuthor(),post_id);
+//        communityUserBLService.deletePost(post.getAuthor(),post_id);
         return ResultMessage.Success;
     }
 
@@ -193,25 +208,7 @@ public class PostBL implements PostBLService {
         return new PostVO(post, content,remarkDao.getRemarksOrderByTime(post_id));
     }
 
-    @Override
-    public ArrayList<BriefPost> readArticleList(String author) {
-        ArrayList<Post> posts=postDao.getPostByAuthor(author);
-        ArrayList<BriefPost> briefPosts=new ArrayList<>();
-        for(Post p:posts){
-            briefPosts.add(new BriefPost(p));
-        }
-        return briefPosts;
-    }
 
-    @Override
-    public ArrayList<BriefPost> getAllArticleList() {
-        List<Post> posts=postDao.findAll();
-        ArrayList<BriefPost> briefPosts=new ArrayList<>();
-        for(Post p:posts){
-            briefPosts.add(new BriefPost(p));
-        }
-        return briefPosts;
-    }
 
     @Override
     public ArrayList<RecordVO> recommend(String author) {
@@ -234,39 +231,19 @@ public class PostBL implements PostBLService {
         }
     }
 
-    @Override
-    public ArrayList<BriefPost> searchArticle(String keywords) {
-        ArrayList<Post> posts=postDao.searchArticle(keywords);
-        ArrayList<BriefPost> briefPosts=new ArrayList<>();
-        for(Post p:posts){
-            briefPosts.add(new BriefPost(p));
-        }
-        return briefPosts;
-    }
-
 
     @Override
+    @Transactional
     public ResultMessage addInterestNum(String post_id) {
-        Post post=postDao.getOne(post_id);
-        post.setInterestNum(post.getInterestNum()+1);
-        postDao.save(post);
+        postDao.addInterestNum(post_id);
         return ResultMessage.Success;
     }
 
     @Override
     public ResultMessage minusInterestNum(String post_id) {
-        Post post=postDao.getOne(post_id);
-        post.setInterestNum(post.getInterestNum()-1);
-        postDao.save(post);
+        postDao.minusInterestNum(post_id);
         return ResultMessage.Success;
     }
-
-    @Override
-    public BriefPost getBriefPostByID(String post_id) {
-        Post post=postDao.getOne(post_id);
-        return new BriefPost(post);
-    }
-
 
     private  byte[] readInputStream(InputStream inputStream) throws IOException {
         byte[] buffer = new byte[1024];

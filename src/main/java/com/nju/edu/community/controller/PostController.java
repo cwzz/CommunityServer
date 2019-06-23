@@ -25,6 +25,9 @@ public class PostController {
     @Autowired
     private PostBLService postBLService;
 
+    /**
+     * 根据分类和标签查找文章
+     */
     @PostMapping(value = "/getArticleList")
     public @ResponseBody
     ArrayList<PostListItem> getArticleList(@RequestBody SearchReq searchReq){
@@ -32,6 +35,9 @@ public class PostController {
         return postBLService.getArticleList(searchReq.getCategory(), searchReq.getLabel());
     }
 
+    /**
+     * 上传文章中的图片获得url
+     */
     @RequestMapping(value = "/changeBaseToUrl",method = RequestMethod.POST)
     public @ResponseBody
     String uploadPicture(@RequestBody UploadPicVO uploadPicVO) {
@@ -41,7 +47,7 @@ public class PostController {
     }
 
     /**
-     * @param file 上传的文件
+     * 上传文件
      */
     @RequestMapping(value="/upLoadFile",method = RequestMethod.POST)
     public @ResponseBody
@@ -79,43 +85,32 @@ public class PostController {
         return postBLService.readArticle(postID.getPostID());
     }
 
+    /**
+     * 编辑文章，现在没有这个功能
+     */
     @RequestMapping(value = "/editArticle",method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage editArticle(@RequestBody EditArticleVO editArticleVO) {
         return postBLService.edit(editArticleVO.getPost_id(), editArticleVO.getPost_name(), editArticleVO.getPost_tag(), editArticleVO.getContent());
     }
 
+    /**
+     * 删除文章，现在没有这个功能
+     */
     @RequestMapping(value = "/deleteArticle",method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage deleteArticle(@RequestParam String post_id) {
         return postBLService.deleteArticle(post_id);
     }
 
+    /**
+     * 评论文章
+     */
     @RequestMapping(value = "/remark",method = RequestMethod.POST)
     public @ResponseBody
     ResultMessage remark(@RequestBody RemarkVO remarkVO) {
         return postBLService.remark(remarkVO.getPost_id(), remarkVO.getReviewer(), remarkVO.getRemark_content());
     }
-
-
-    @RequestMapping(value = "/readArticleList",method = RequestMethod.POST)
-    public @ResponseBody
-    ArrayList<BriefPost> readArticleList(@RequestParam String author) {
-        return postBLService.readArticleList(author);
-    }
-
-    @RequestMapping(value = "/searchArticle",method = RequestMethod.POST)
-    public @ResponseBody
-    ArrayList<BriefPost> searchArticle(@RequestParam String keywords) {
-        return postBLService.searchArticle(keywords);
-    }
-
-    @RequestMapping(value = "/getAllArticle",method = RequestMethod.POST)
-    public @ResponseBody
-    ArrayList<BriefPost> getAllArticle() {
-        return postBLService.getAllArticleList();
-    }
-
 
     @RequestMapping(value = "/testDownload", method = RequestMethod.POST)
     public void Download(HttpServletResponse res) {

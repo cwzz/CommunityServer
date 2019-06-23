@@ -18,9 +18,9 @@ public class PostListItem {
     private int reply;
     private int view;
 
-    public PostListItem(Post post, boolean set_top){
+    public PostListItem(Post post){
         this.postId=post.getPid();
-        this.set_top=set_top;
+        this.set_top=post.isSetTop();
         this.tag=post.getPostTag();
         this.title=post.getTitle();
         this.author=post.getAuthor();

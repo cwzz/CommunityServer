@@ -45,10 +45,16 @@ public class User {
 
     private int fansNum;//用户的粉丝数
 
-    @OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    private List<Mine> mines;//与用户相关的帖子或用户的列表
+    //用户收藏的帖子
+    @ElementCollection(targetClass = String.class)
+    private List<String> collectPost;//收藏的帖子
 
+    //用户的粉丝
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Record> history;//用户的浏览记录
+    private List<NameAndImage> fans;
+
+    //用户关注的人
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<NameAndImage> interestUser;
 
 }
