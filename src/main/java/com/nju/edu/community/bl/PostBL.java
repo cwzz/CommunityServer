@@ -124,7 +124,7 @@ public class PostBL implements PostBLService {
     public ResultMessage publishArticle(String postID, String author, String postTitle, String category,
                                         String postTag, String briefIntro, String content) throws IOException {
         this.saveAsFile(content);
-        File file=new File("test.txt");
+        File file=new File("D:\\test.txt");
         FileInputStream input = new FileInputStream(file);
         MultipartFile multipartFile = new MockMultipartFile("file", file.getName(), "text/plain",input);
         String content_url=uploadFile(postID,multipartFile);

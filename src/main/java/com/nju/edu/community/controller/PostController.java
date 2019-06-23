@@ -46,8 +46,10 @@ public class PostController {
 
     @RequestMapping(value = "/changeBaseToUrl",method = RequestMethod.POST)
     public @ResponseBody
-    String uploadPicture(@RequestParam String base64, @RequestParam String filename, @RequestParam String projectID) {
-        return aliService.uploadPicture(projectID, filename, base64);
+    String uploadPicture(@RequestBody UploadPicVO uploadPicVO) {
+        System.err.println("yes");
+        System.err.println(uploadPicVO.getBase64()+","+uploadPicVO.getFilename()+","+uploadPicVO.getProjectID());
+        return aliService.uploadPicture(uploadPicVO.getProjectID(),uploadPicVO.getFilename(),uploadPicVO.getBase64());
     }
 
     /**
