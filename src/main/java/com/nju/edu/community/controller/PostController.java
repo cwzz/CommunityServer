@@ -53,7 +53,7 @@ public class PostController {
     /**
      * @param file 上传的文件
      */
-    @RequestMapping("/upLoadFile")
+    @PostMapping("/upLoadFile")
     public @ResponseBody
     String upLoadFile(MultipartFile file) {
         System.out.println(file.getOriginalFilename());
@@ -63,7 +63,7 @@ public class PostController {
     /**
      * 发帖时先创建ID
      */
-    @RequestMapping(value = "/createPostID")
+    @PostMapping(value = "/createPostID")
     public @ResponseBody
     String createPostID(@RequestParam String author) {
         return postBLService.createID(author);
@@ -75,51 +75,51 @@ public class PostController {
      * @return
      * @throws IOException
      */
-    @RequestMapping(value = "/publishArticle")
+    @PostMapping(value = "/publishArticle")
     public @ResponseBody
     ResultMessage publishArticle(@RequestBody PublishArticleVO publishArticleVO) throws IOException {
         System.err.println("新发布的文章ID："+publishArticleVO.getPostId());
         return postBLService.publishArticle(publishArticleVO.getPostId(), publishArticleVO.getAuthor(), publishArticleVO.getPostTitle(), publishArticleVO.getCategory(),publishArticleVO.getPostTag(), publishArticleVO.getBriefIntro(), publishArticleVO.getContent());
     }
 
-    @RequestMapping(value = "/editArticle")
+    @PostMapping(value = "/editArticle")
     public @ResponseBody
     ResultMessage editArticle(@RequestBody EditArticleVO editArticleVO) {
         return postBLService.edit(editArticleVO.getPost_id(), editArticleVO.getPost_name(), editArticleVO.getPost_tag(), editArticleVO.getContent());
     }
 
-    @RequestMapping(value = "/deleteArticle")
+    @PostMapping(value = "/deleteArticle")
     public @ResponseBody
     ResultMessage deleteArticle(@RequestParam String post_id) {
         return postBLService.deleteArticle(post_id);
     }
 
-    @RequestMapping(value = "/remark")
+    @PostMapping(value = "/remark")
     public @ResponseBody
     ResultMessage remark(@RequestParam String post_id, @RequestParam String reviewer, @RequestParam String remark_content) {
         return postBLService.remark(post_id, reviewer, remark_content);
     }
 
-    @RequestMapping(value = "/readArticle")
+    @PostMapping(value = "/readArticle")
     public @ResponseBody
     PostVO readArticle(@RequestParam String post_id, @RequestParam String reader) throws IOException {
         return postBLService.readArticle(post_id, reader);
     }
 
 
-    @RequestMapping(value = "/readArticleList")
+    @PostMapping(value = "/readArticleList")
     public @ResponseBody
     ArrayList<BriefPost> readArticleList(@RequestParam String author) {
         return postBLService.readArticleList(author);
     }
 
-    @RequestMapping(value = "/searchArticle")
+    @PostMapping(value = "/searchArticle")
     public @ResponseBody
     ArrayList<BriefPost> searchArticle(@RequestParam String keywords) {
         return postBLService.searchArticle(keywords);
     }
 
-    @RequestMapping(value = "/getAllArticle")
+    @PostMapping(value = "/getAllArticle")
     public @ResponseBody
     ArrayList<BriefPost> getAllArticle() {
         return postBLService.getAllArticleList();
