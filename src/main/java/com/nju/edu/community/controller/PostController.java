@@ -4,8 +4,7 @@ import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.PostBLService;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.*;
-import com.nju.edu.community.vo.postvo.PostListItem;
-import com.nju.edu.community.vo.postvo.SearchReq;
+import com.nju.edu.community.vo.postvo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -65,7 +64,7 @@ public class PostController {
      */
     @RequestMapping(value = "/createPostID",method = RequestMethod.POST)
     public @ResponseBody
-    String createPostID(@RequestBody Author_name author) {
+    String createPostID(@RequestBody Author author) {
         System.err.println("？？？？");
         String s=postBLService.createID(author.getAuthor());
         System.err.println("文章ID："+s);
@@ -74,9 +73,6 @@ public class PostController {
 
     /**
      * 发表文章
-     * @param publishArticleVO
-     * @return
-     * @throws IOException
      */
     @RequestMapping(value = "/publishArticle",method = RequestMethod.POST)
     public @ResponseBody
@@ -84,6 +80,15 @@ public class PostController {
         System.err.println("yes");
         System.err.println("新发布的文章ID："+publishArticleVO.getPostId());
         return postBLService.publishArticle(publishArticleVO.getPostId(), publishArticleVO.getAuthor(), publishArticleVO.getPostTitle(), publishArticleVO.getCategory(),publishArticleVO.getPostTag(), publishArticleVO.getBriefIntro(), publishArticleVO.getContent());
+    }
+
+    /**
+     * 根据ID读取具体文章信息
+     */
+    @RequestMapping(value = "/readArticle",method = RequestMethod.POST)
+    public @ResponseBody
+    PostVO readArticle(@RequestBody PostID postID) throws IOException {
+        return postBLService.readArticle(postID.getPostID());
     }
 
     @RequestMapping(value = "/editArticle",method = RequestMethod.POST)
@@ -104,11 +109,6 @@ public class PostController {
         return postBLService.remark(post_id, reviewer, remark_content);
     }
 
-    @RequestMapping(value = "/readArticle",method = RequestMethod.POST)
-    public @ResponseBody
-    PostVO readArticle(@RequestParam String post_id, @RequestParam String reader) throws IOException {
-        return postBLService.readArticle(post_id, reader);
-    }
 
     @RequestMapping(value = "/readArticleList",method = RequestMethod.POST)
     public @ResponseBody
@@ -129,7 +129,7 @@ public class PostController {
     }
 
 
-    @RequestMapping(value = "/testDownload", method = RequestMethod.GET)
+    @RequestMapping(value = "/testDownload", method = RequestMethod.POST)
     public void Download(HttpServletResponse res) {
         String fileName = "1.png";
         res.setHeader("content-type", "application/octet-stream");
@@ -162,12 +162,12 @@ public class PostController {
         System.out.println("success");
     }
 
-    @RequestMapping(value = "/download", method = RequestMethod.GET)
+    @RequestMapping(value = "/download", method = RequestMethod.POST)
     public String Download() {
         return "/fileDownload";
     }
 
-    @RequestMapping(value = "/recommend", method = RequestMethod.GET)
+    @RequestMapping(value = "/recommend", method = RequestMethod.POST)
     public ArrayList<RecordVO> getRecommend(String author) {
         return postBLService.recommend(author);
     }

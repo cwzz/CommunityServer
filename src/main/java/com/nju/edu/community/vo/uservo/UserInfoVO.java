@@ -1,6 +1,7 @@
 package com.nju.edu.community.vo.uservo;
 
 import com.nju.edu.community.entity.User;
+import com.nju.edu.community.enums.Sex;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -18,7 +19,7 @@ public class UserInfoVO {
 
     private String nickname;//用户的昵称
 
-    private String gender;//性别
+    private Sex gender;//性别
 
     private String desc;//简介
 
@@ -37,7 +38,7 @@ public class UserInfoVO {
         this.email=user.getUid();
         this.imageUrl=user.getImage();
         this.nickname=user.getNickname();
-        this.gender=user.getSex().toString();
+        this.gender=user.getSex();
         this.desc=user.getIntroduce();
         this.birth=user.getBirthday();
         this.interest=user.getTags().split(",");

@@ -20,7 +20,7 @@ public class Post {
     private String pid;//文章ID
     private String author;//文章作者，邮箱号
     private String title;//文章标题
-    private String brief_intro;//文章简介
+    private String briefIntro;//文章简介
 
     private String category;//文章分类
 

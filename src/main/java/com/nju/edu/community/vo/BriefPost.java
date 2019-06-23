@@ -5,8 +5,6 @@ import com.nju.edu.community.entity.Post;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.util.ArrayList;
-
 @Data
 @AllArgsConstructor
 public class BriefPost {
@@ -26,7 +24,7 @@ public class BriefPost {
         this.author=post.getAuthor();
         this.post_name=post.getTitle();
         this.post_tag=post.getPostTag();
-        this.brief_intro=post.getBrief_intro();
+        this.brief_intro=post.getBriefIntro();
         this.publish_time=post.getPublishTime();
         this.visits=post.getVisits();
         this.remark_num=post.getRemarkNum();

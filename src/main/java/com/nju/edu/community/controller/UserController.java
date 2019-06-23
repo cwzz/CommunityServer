@@ -75,7 +75,16 @@ public class UserController {
      */
     @RequestMapping(value = "/modifyUserInfo", method = RequestMethod.POST)
     public @ResponseBody
-    void modifyUserInfo(@RequestBody UserInfoVO userInfoVO){
-        userBLService.modifyUserInfo(userInfoVO);
+    ResultMessage modifyUserInfo(@RequestBody UserInfoVO userInfoVO){
+        return userBLService.modifyUserInfo(userInfoVO);
+    }
+
+    /**
+     * 修改用户头像
+     */
+    @RequestMapping(value = "/modifyImage", method = RequestMethod.POST)
+    public @ResponseBody
+    ResultMessage modifyImage(){
+        return null;
     }
 }

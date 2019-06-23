@@ -117,8 +117,27 @@ public class UserBL implements UserBLService {
     }
 
     @Override
-    public void modifyUserInfo(UserInfoVO userInfoVO){
-
+    public ResultMessage modifyUserInfo(UserInfoVO userInfoVO){
+        User user=userDao.findByEmail(userInfoVO.getEmail());
+        if (user!=null){
+            user.setNickname(userInfoVO.getNickname());
+            user.setSex(userInfoVO.getGender());
+            user.setBirthday(userInfoVO.getBirth());
+            user.setIntroduce(userInfoVO.getDesc());
+            StringBuilder tags=new StringBuilder();
+            int i=0;
+            for (String s:userInfoVO.getInterest()){
+                tags.append(s);
+                if (i!=userInfoVO.getInterest().length-1){
+                    tags.append(",");
+                }
+                i++;
+            }
+            user.setTags(tags.toString());
+            userDao.save(user);
+            return ResultMessage.Success;
+        }
+        return ResultMessage.Fail;
     }
 
     private String generateCode(){

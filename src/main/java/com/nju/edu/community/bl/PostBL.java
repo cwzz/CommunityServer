@@ -10,7 +10,7 @@ import com.nju.edu.community.entity.Remark;
 import com.nju.edu.community.enums.PostState;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.BriefPost;
-import com.nju.edu.community.vo.PostVO;
+import com.nju.edu.community.vo.postvo.PostVO;
 import com.nju.edu.community.vo.RecordVO;
 import com.nju.edu.community.vo.postvo.PostListItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -72,7 +71,7 @@ public class PostBL implements PostBLService {
     }
 
     private void saveAsFile(String content) throws IOException {
-        String saveFile = "D:\\test.txt";
+        String saveFile = "test.txt";
         File file=new File(saveFile);
         if(!file.exists()){
             file.createNewFile();
@@ -96,10 +95,10 @@ public class PostBL implements PostBLService {
     public String uploadFile(String post_id, MultipartFile file) {
         String filename = post_id+".txt";
         String uploadUrl="";
+        File newFile = new File(filename);
         try {
             if (file!=null) {
                 if (!"".equals(filename.trim())) {
-                    File newFile = new File(filename);
                     FileOutputStream os = new FileOutputStream(newFile);
                     os.write(file.getBytes());
                     os.close();
@@ -115,6 +114,8 @@ public class PostBL implements PostBLService {
             }
         } catch (Exception ex) {
             ex.printStackTrace();
+        }finally {
+            newFile.delete();
         }
         return uploadUrl;
     }
@@ -133,10 +134,8 @@ public class PostBL implements PostBLService {
         post.setTitle(postTitle);
         post.setCategory(category);
         post.setPostTag(postTag);
-        post.setBrief_intro(briefIntro);
+        post.setBriefIntro(briefIntro);
         post.setContentUrl(content_url);
-//        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd HH:mm");
-//        String day=df.format(new Date());
         post.setPublishTime(new Date().getTime());
         post.setVisits(0);
         post.setRemarkNum(0);
@@ -181,14 +180,12 @@ public class PostBL implements PostBLService {
     }
 
     @Override
-    public PostVO readArticle(String post_id, String reader) throws IOException {
+    public PostVO readArticle(String post_id) throws IOException {
         Post post=postDao.getOne(post_id);
         String content=downLoadFromUrl(post.getContentUrl());
-        PostVO postVO=new PostVO(post.getPid(),post.getAuthor(),post.getTitle(),
-                post.getPostTag(),content,post.getPublishTime(),post.getVisits(),
-                post.getRemarkNum(),post.getInterestNum(),new ArrayList<>(post.getRemarkList()));
-        communityUserBLService.browsePost(reader,post_id,post.getTitle());
-        return postVO;
+        post.setVisits(post.getVisits()+1);
+        postDao.save(post);
+        return new PostVO(post, content);
     }
 
     @Override
@@ -292,12 +289,12 @@ public class PostBL implements PostBLService {
         //获取自己数组
         byte[] getData = readInputStream(inputStream);
         //文件保存位置
-        File saveDir = new File("D:");
-        if(!saveDir.exists()){
-            saveDir.mkdir();
-        }
+//        File saveDir = new File("D:");
+//        if(!saveDir.exists()){
+//            saveDir.mkdir();
+//        }
 //        File file = new File(saveDir+File.separator+fileName);
-        File file=new File(saveDir+File.separator+"temp.txt");
+        File file=new File("temp.txt");
         FileOutputStream fos = new FileOutputStream(file);
         fos.write(getData);
         if(fos!=null){
@@ -337,6 +334,7 @@ public class PostBL implements PostBLService {
                     e.printStackTrace();
                 }
             }
+            file.delete();
         }
         // 如果文件路径所对应的文件存在，并且是一个文件，则直接删除
 //        if (file.exists() && file.isFile()) {

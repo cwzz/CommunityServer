@@ -24,6 +24,9 @@ public interface UserBLService {
     UserInfoVO getUserInfo(String userID);
 
     //修改用户个人中心信息
-    void modifyUserInfo(UserInfoVO userInfoVO);
+    ResultMessage modifyUserInfo(UserInfoVO userInfoVO);
+
+    //修改用户头像
+
 
 }
