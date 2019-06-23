@@ -1,5 +1,6 @@
 package com.nju.edu.community.bl;
 
+import com.nju.edu.community.blservice.MessageBLService;
 import com.nju.edu.community.dao.RemarkDao;
 import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.CommunityUserBLService;
@@ -32,18 +33,16 @@ import java.util.List;
 public class PostBL implements PostBLService {
     @Autowired
     private PostDao postDao;
-
     @Autowired
     private UserBLService userBLService;
-
     @Autowired
     private CommunityUserBLService communityUserBLService;
-
     @Autowired
     private AliServiceImpl aliService;
-
     @Autowired
     private RemarkDao remarkDao;
+    @Autowired
+    private MessageBLService messageBLService;
 
     @Override
     public ArrayList<PostListItem> getArticleList(String category, String tag) {
@@ -196,6 +195,7 @@ public class PostBL implements PostBLService {
         remarks.add(remark);
         post.setRemarkList(remarks);
         postDao.save(post);
+        messageBLService.generateMessage(post.getAuthor(),reviewer+"评论了您的文章:《"+post.getTitle()+"》");
         return ResultMessage.Success;
     }
 

@@ -1,11 +1,11 @@
 package com.nju.edu.community.blservice;
 
-import com.nju.edu.community.entity.CommunityMessage;
+import com.nju.edu.community.entity.Message;
 import com.nju.edu.community.vo.MessageSetRead;
 
 import java.util.ArrayList;
 
-public interface CommunityMessageBLService {
+public interface MessageBLService {
 
     void generateMessage(String receiver, String event);
 
@@ -13,7 +13,7 @@ public interface CommunityMessageBLService {
 
     void setRead(MessageSetRead messageSetRead);
 
-    ArrayList<CommunityMessage> getAllMessageList(String username);
+    ArrayList<Message> getAllMessageList(String username);
 
-    ArrayList<CommunityMessage> getUnreadMessageList(String username);
+    ArrayList<Message> getUnreadMessageList(String username);
 }

@@ -1,6 +1,7 @@
 package com.nju.edu.community.bl;
 
 import com.nju.edu.community.blservice.CommunityUserBLService;
+import com.nju.edu.community.blservice.MessageBLService;
 import com.nju.edu.community.blservice.PostBLService;
 import com.nju.edu.community.dao.UserDao;
 import com.nju.edu.community.entity.NameAndImage;
@@ -23,6 +24,9 @@ public class CommunityUserBL implements CommunityUserBLService {
     private UserDao userDao;
     @Autowired
     private PostBLService postBLService;
+    @Autowired
+    private MessageBLService messageBLService;
+
     @Override
     public List<UserInfoVO> searchByKeyword(String keyword) {
         List<UserInfoVO> results=new ArrayList<>();
@@ -110,6 +114,8 @@ public class CommunityUserBL implements CommunityUserBLService {
             //粉丝的关注列表添加一项
             NameAndImage nameAndImage1=new NameAndImage(0,beStaredID,beStarU.getNickname(),beStarU.getImage(),starEachOther);
             fan.getInterestUser().add(nameAndImage1);
+
+            messageBLService.generateMessage(beStaredID,fansID+"关注了您");
             userDao.saveAndFlush(fan);
         }
     }

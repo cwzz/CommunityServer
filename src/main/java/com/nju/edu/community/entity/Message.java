@@ -2,6 +2,7 @@ package com.nju.edu.community.entity;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
@@ -9,7 +10,8 @@ import javax.persistence.*;
 @Table(name = "message")
 @Entity
 @AllArgsConstructor
-public class CommunityMessage {
+@NoArgsConstructor
+public class Message {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,7 +20,5 @@ public class CommunityMessage {
     private String event;
     private String time;
     private boolean isRead;
-
-    public CommunityMessage(){}
 
 }
