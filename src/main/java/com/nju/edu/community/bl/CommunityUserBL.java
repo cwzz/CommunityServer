@@ -45,6 +45,11 @@ public class CommunityUserBL implements CommunityUserBLService {
 
     @Override
     public boolean judgeStar(String currentUser, String user) {
+        for(NameAndImage n:userDao.findByEmail(currentUser).getInterestUser()){
+            if (n.getEmail().equals(user)){
+                return true;
+            }
+        }
         return false;
     }
 
