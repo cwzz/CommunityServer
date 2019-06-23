@@ -1,12 +1,9 @@
 package com.nju.edu.community.entity;
 
-import com.nju.edu.community.enums.PostCategory;
 import com.nju.edu.community.enums.PostState;
-import com.nju.edu.community.enums.PostTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
@@ -25,11 +22,9 @@ public class Post {
     private String title;//文章标题
     private String brief_intro;//文章简介
 
-    @Enumerated(EnumType.STRING)
-    private PostCategory category;//文章分类
+    private String category;//文章分类
 
-    @Enumerated(EnumType.STRING)
-    private PostTag postTag;//文章标签
+    private String postTag;//文章标签
 
     private PostState state;//文章的状态
     private boolean setTop;//文章是否置顶

@@ -6,7 +6,6 @@ import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.*;
 import com.nju.edu.community.vo.postvo.PostListItem;
 import com.nju.edu.community.vo.postvo.SearchReq;
-import javafx.scene.chart.ValueAxis;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -26,22 +25,23 @@ public class PostController {
     @Autowired
     private PostBLService postBLService;
 
-    @RequestMapping(value = "/getArticleList")
+    @PostMapping(value = "/getArticleList")
     public @ResponseBody
     ArrayList<PostListItem> getArticleList(@RequestBody SearchReq searchReq){
         System.out.println(searchReq.toString());
-        ArrayList<PostListItem> list=new ArrayList<>();
-        list.add(new PostListItem("postid1", true, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
-                "王旭儿子", 666,100));
-        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
-                "王旭儿子", 666,100));
-        list.add(new PostListItem("postid1", true, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
-                "王旭儿子", 666,100));
-        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
-                "王旭儿子", 666,100));
-        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
-                "王旭儿子", 666,100));
-        return list;
+        return postBLService.getArticleList(searchReq.getCategory(), searchReq.getLabel());
+//        ArrayList<PostListItem> list=new ArrayList<>();
+//        list.add(new PostListItem("postid1", true, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+//                "王旭儿子", 666,100));
+//        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+//                "王旭儿子", 666,100));
+//        list.add(new PostListItem("postid1", true, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+//                "王旭儿子", 666,100));
+//        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+//                "王旭儿子", 666,100));
+//        list.add(new PostListItem("postid1", false, searchReq.getLabel(), "2019年《专利代理师资格考试办法》公布，详细报考条件说明！",
+//                "王旭儿子", 666,100));
+//        return list;
     }
 
     @RequestMapping(value = "/changeBaseToUrl")

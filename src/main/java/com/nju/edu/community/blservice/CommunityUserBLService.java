@@ -1,11 +1,9 @@
 package com.nju.edu.community.blservice;
 
 import com.nju.edu.community.entity.Mine;
-import com.nju.edu.community.enums.PostCategory;
-import com.nju.edu.community.enums.PostTag;
 import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.BriefUser;
-import com.nju.edu.community.vo.CUserVO;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 import com.nju.edu.community.vo.RecordVO;
 
 import java.util.ArrayList;
@@ -16,13 +14,7 @@ public interface  CommunityUserBLService {
     //模糊查找，根据关键词搜素用户
     List<BriefUser> searchByKeyword(String keyword);
 
-    //获得用户的基本信息,包括积分，钱包，签名，关注数……
-    CUserVO getUserInfo(String userID);
-    //用户修改社区中个性签名
-    void modifyNickname(String username, String signature);
 
-    //用户选择他感兴趣的标签
-    void modifyTag(String username, ArrayList<PostTag> tags);
     //用户发布帖子
     void releasePost(String username, String postID);
     //用户删除自己的帖子

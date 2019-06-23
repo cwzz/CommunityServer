@@ -2,7 +2,6 @@ package com.nju.edu.community.vo;
 
 
 import com.nju.edu.community.entity.Post;
-import com.nju.edu.community.enums.PostTag;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -14,7 +13,7 @@ public class BriefPost {
     private String post_id;
     private String author;
     private String post_name;
-    private PostTag post_tag;
+    private String post_tag;
     private String brief_intro;
     private long publish_time;
     private long visits;
