@@ -46,7 +46,7 @@ public class PostBL implements PostBLService {
         if (category.equals("全部")&&tag.equals("全部")){
             posts=postDao.searchAllArticle();
         }else if (category.equals("全部")){
-            posts=postDao.searchArticleByCategory(category);
+            posts=postDao.searchArticleByCategory(tag);
         }else {
             postDao.searchArticleByTag(category, tag);
         }
