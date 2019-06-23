@@ -1,5 +1,6 @@
 package com.nju.edu.community.bl;
 
+import com.nju.edu.community.dao.RemarkDao;
 import com.nju.edu.community.util.ali.AliServiceImpl;
 import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.blservice.PostBLService;
@@ -40,6 +41,9 @@ public class PostBL implements PostBLService {
 
     @Autowired
     private AliServiceImpl aliService;
+
+    @Autowired
+    private RemarkDao remarkDao;
 
     @Override
     public ArrayList<PostListItem> getArticleList(String category, String tag) {
@@ -186,7 +190,7 @@ public class PostBL implements PostBLService {
         String content=downLoadFromUrl(post.getContentUrl());
         post.setVisits(post.getVisits()+1);
         postDao.save(post);
-        return new PostVO(post, content);
+        return new PostVO(post, content,remarkDao.getRemarksOrderByTime(post_id));
     }
 
     @Override

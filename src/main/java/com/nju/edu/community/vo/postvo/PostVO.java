@@ -25,7 +25,7 @@ public class PostVO {
 
     public PostVO(){}
 
-    public PostVO(Post post, String content){
+    public PostVO(Post post, String content, ArrayList<Remark> remarks){
         this.postId =post.getPid();
         this.author=post.getAuthor();
         this.postTitle =post.getTitle();
@@ -37,7 +37,7 @@ public class PostVO {
         this.visits=post.getVisits();
         this.remarkNum =post.getRemarkNum();
         this.interestNum =post.getInterestNum();
-        this.remark_content=new ArrayList<>(post.getRemarkList());
+        this.remark_content=remarks;
     }
 
 
