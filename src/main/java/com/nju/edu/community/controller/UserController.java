@@ -1,6 +1,5 @@
 package com.nju.edu.community.controller;
 
-import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.uservo.EmailVO;
@@ -19,9 +18,6 @@ public class UserController {
 
     @Autowired
     private UserBLService userBLService;
-
-    @Autowired
-    private CommunityUserBLService communityUserBLService;
 
     /**
      * 获取注册验证码
