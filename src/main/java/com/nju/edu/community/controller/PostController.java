@@ -107,8 +107,8 @@ public class PostController {
 
     @RequestMapping(value = "/remark",method = RequestMethod.POST)
     public @ResponseBody
-    ResultMessage remark(@RequestParam String post_id, @RequestParam String reviewer, @RequestParam String remark_content) {
-        return postBLService.remark(post_id, reviewer, remark_content);
+    ResultMessage remark(@RequestBody RemarkVO remarkVO) {
+        return postBLService.remark(remarkVO.getPost_id(), remarkVO.getReviewer(), remarkVO.getRemark_content());
     }
 
 
