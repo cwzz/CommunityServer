@@ -81,7 +81,7 @@ public class UserController {
      */
     @RequestMapping(value = "/modifyImage", method = RequestMethod.POST)
     public @ResponseBody
-    String modifyImage( UploadImageVO imageVO){
+    String modifyImage(UploadImageVO imageVO){
         return userBLService.modifyImage(imageVO.getEmail(), imageVO.getFile());
     }
 }

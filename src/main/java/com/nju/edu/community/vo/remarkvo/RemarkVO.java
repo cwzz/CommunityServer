@@ -1,4 +1,4 @@
-package com.nju.edu.community.vo;
+package com.nju.edu.community.vo.remarkvo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

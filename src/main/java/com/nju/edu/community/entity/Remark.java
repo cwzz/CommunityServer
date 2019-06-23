@@ -17,15 +17,19 @@ public class Remark {
     private String post_id;
     private String remark_content;
     private String reviewer;
-    private Date remark_time;
+    private String review_img;
+    private String nickname;
+    private long remark_time;
 
     public Remark(){}
 
-    public Remark(String post_id,String remark_content,String reviewer){
+    public Remark(String post_id,String remark_content,String reviewer,String review_img, String nickname){
         this.post_id=post_id;
         this.remark_content=remark_content;
         this.reviewer=reviewer;
-        this.remark_time=new Date();
+        this.remark_time=new Date().getTime();
+        this.review_img=review_img;
+        this.nickname=nickname;
     }
 
 }

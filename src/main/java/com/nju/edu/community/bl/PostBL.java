@@ -13,6 +13,7 @@ import com.nju.edu.community.vo.BriefPost;
 import com.nju.edu.community.vo.postvo.PostVO;
 import com.nju.edu.community.vo.RecordVO;
 import com.nju.edu.community.vo.postvo.PostListItem;
+import com.nju.edu.community.vo.uservo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
@@ -168,14 +169,14 @@ public class PostBL implements PostBLService {
 
     @Override
     public ResultMessage remark(String post_id, String reviewer, String remark_content) {
-        Remark remark=new Remark(post_id,reviewer,remark_content);
+        UserInfoVO userInfoVO=userBLService.getUserInfo(reviewer);
+        Remark remark=new Remark(post_id,reviewer,remark_content,userInfoVO.getImageUrl(),userInfoVO.getNickname());
         Post post=postDao.getOne(post_id);
         post.setRemarkNum(post.getRemarkNum()+1);
         List<Remark> remarks=post.getRemarkList();
         remarks.add(remark);
         post.setRemarkList(remarks);
         postDao.save(post);
-        addRemarkNum(post_id);
         return ResultMessage.Success;
     }
 
@@ -347,12 +348,5 @@ public class PostBL implements PostBLService {
 //            System.out.println("删除单个文件失败,不存在！");
 //        }
         return res;
-    }
-
-    private ResultMessage addRemarkNum(String post_id) {
-        Post post=postDao.getOne(post_id);
-        post.setRemarkNum(post.getRemarkNum()+1);
-        postDao.save(post);
-        return ResultMessage.Success;
     }
 }

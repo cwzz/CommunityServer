@@ -14,6 +14,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class UserBL implements UserBLService {
@@ -42,8 +44,9 @@ public class UserBL implements UserBLService {
         user.setImage(defaultImageUrl);
         user.setSex(Sex.男);
         user.setIntroduce("");
-        user.setBirthday("");
-        user.setNickname("");
+        String defaultBir=new SimpleDateFormat("yyyy-MM-dd").format(new Date());
+        user.setBirthday(defaultBir);
+        user.setNickname(email);
         user.setTags("");
 
         new Thread( new MailUtil(email, code,true)).start();
