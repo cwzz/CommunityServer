@@ -2,10 +2,7 @@ package com.nju.edu.community.controller;
 
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.enums.ResultMessage;
-import com.nju.edu.community.vo.uservo.EmailVO;
-import com.nju.edu.community.vo.uservo.LoginReq;
-import com.nju.edu.community.vo.uservo.RegisterReq;
-import com.nju.edu.community.vo.uservo.UserInfoVO;
+import com.nju.edu.community.vo.uservo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -84,7 +81,7 @@ public class UserController {
      */
     @RequestMapping(value = "/modifyImage", method = RequestMethod.POST)
     public @ResponseBody
-    ResultMessage modifyImage(){
+    ResultMessage modifyImage(@RequestBody UploadImageVO imageVO){
         return null;
     }
 }

@@ -27,6 +27,8 @@ public class UserInfoVO {
 
     private String[] interest;//用户感兴趣的标签
 
+    private int releasedNum;//用户发帖数
+
     private int interestUserNums;//用户的关注数
 
     private int collectPostNums;//用户收藏的帖子数
@@ -43,6 +45,7 @@ public class UserInfoVO {
         this.birth=user.getBirthday();
         this.interest=user.getTags().split(",");
 
+        this.releasedNum=user.getReleasedNum();
         this.interestUserNums=user.getInterestNum();
         this.collectPostNums=user.getCollectNum();
         this.fansNums=user.getFansNum();
