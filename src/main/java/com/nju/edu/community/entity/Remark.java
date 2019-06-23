@@ -23,7 +23,7 @@ public class Remark {
 
     public Remark(){}
 
-    public Remark(String post_id,String remark_content,String reviewer,String review_img, String nickname){
+    public Remark(String post_id,String reviewer ,String remark_content,String review_img, String nickname){
         this.post_id=post_id;
         this.remark_content=remark_content;
         this.reviewer=reviewer;

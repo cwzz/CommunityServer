@@ -56,10 +56,7 @@ public class PostController {
     @RequestMapping(value = "/createPostID",method = RequestMethod.POST)
     public @ResponseBody
     String createPostID(@RequestBody Author author) {
-        System.err.println("？？？？");
-        String s=postBLService.createID(author.getAuthor());
-        System.err.println("文章ID："+s);
-        return s;
+        return postBLService.createID(author.getAuthor());
     }
 
     /**
@@ -151,11 +148,6 @@ public class PostController {
             }
         }
         System.out.println("success");
-    }
-
-    @RequestMapping(value = "/download", method = RequestMethod.POST)
-    public String Download() {
-        return "/fileDownload";
     }
 
     @RequestMapping(value = "/recommend", method = RequestMethod.POST)
