@@ -96,27 +96,34 @@ public class CommunityUserBL implements CommunityUserBLService {
 
             boolean starEachOther=exist(fansID, beStarU.getInterestUser());
 
-            beStarU.setFansNum(beStarU.getFansNum()+1);
-            //粉丝列表中添加一项
-            NameAndImage nameAndImage=new NameAndImage(0,fansID,fan.getNickname(),fan.getImage(),starEachOther);
-            beStarU.getFans().add(nameAndImage);
-            if (starEachOther){//如果star也关注了fan，那么star的关注列表中fan的状态要变化
-                for (NameAndImage n:beStarU.getInterestUser()){
-                    if (n.getEmail().equals(fansID)){
-                        n.setFollow(true);
+            boolean isFan=exist(fansID,beStarU.getFans());
+            if (!isFan){
+                beStarU.setFansNum(beStarU.getFansNum()+1);
+                //粉丝列表中添加一项
+                NameAndImage nameAndImage=new NameAndImage(0,fansID,fan.getNickname(),fan.getImage(),starEachOther);
+                beStarU.getFans().add(nameAndImage);
+                if (starEachOther){//如果star也关注了fan，那么star的关注列表中fan的状态要变化
+                    for (NameAndImage n:beStarU.getInterestUser()){
+                        if (n.getEmail().equals(fansID)){
+                            n.setFollow(true);
+                        }
                     }
                 }
+                userDao.saveAndFlush(beStarU);
             }
-            userDao.saveAndFlush(beStarU);
 
             //粉丝的关注用户数+1
-            fan.setInterestNum(fan.getInterestNum()+1);
             //粉丝的关注列表添加一项
-            NameAndImage nameAndImage1=new NameAndImage(0,beStaredID,beStarU.getNickname(),beStarU.getImage(),starEachOther);
-            fan.getInterestUser().add(nameAndImage1);
+            boolean haveStared=exist(beStaredID, fan.getInterestUser());
+            if (!haveStared){//如果已经关注过
+                fan.setInterestNum(fan.getInterestNum()+1);
+                NameAndImage nameAndImage1=new NameAndImage(0,beStaredID,beStarU.getNickname(),beStarU.getImage(),starEachOther);
+                fan.getInterestUser().add(nameAndImage1);
+                messageBLService.generateMessage(beStaredID,fansID+"关注了您");
+                userDao.saveAndFlush(fan);
+            }
 
-            messageBLService.generateMessage(beStaredID,fansID+"关注了您");
-            userDao.saveAndFlush(fan);
+
         }
     }
 
@@ -137,7 +144,7 @@ public class CommunityUserBL implements CommunityUserBLService {
             User fan=fans.get();
             User star=stars.get();
 
-            //该粉丝的关注列表-1
+            //取消者的关注列表-1
             fan.setInterestNum(fan.getInterestNum()-1);
             List<NameAndImage> list1=fan.getInterestUser();
             for (NameAndImage nameAndImage:list1){
@@ -147,9 +154,20 @@ public class CommunityUserBL implements CommunityUserBLService {
                 }
             }
             fan.setInterestUser(list1);
+            //如果被取消者是取消者的粉丝，那么取消者的粉丝列表中被取消者的互关状态变为false
+            boolean isFan=exist(starID, fan.getFans());
+            List<NameAndImage> list=fan.getFans();
+            if (isFan){
+                for (NameAndImage n:list){
+                    if (n.getEmail().equals(starID)){
+                        n.setFollow(false);
+                    }
+                }
+            }
+            fan.setFans(list);
             userDao.saveAndFlush(fan);
 
-            //博主的粉丝数量-1
+            //被取消者的粉丝数量-1
             star.setFansNum(star.getFansNum()-1);
             List<NameAndImage> list2=star.getFans();
             for (NameAndImage nameAndImage:list2){
