@@ -13,7 +13,7 @@ public interface AliService {
     String uploadFile(MultipartFile file);
 
     //原样上传图片
-    String uploadImage(MultipartFile file);
+    String uploadImage(MultipartFile file, String filename);
 
     String uploadBase64File(String path, String base64);
 }

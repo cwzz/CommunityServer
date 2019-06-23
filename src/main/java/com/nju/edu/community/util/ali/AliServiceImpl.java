@@ -103,11 +103,10 @@ public class AliServiceImpl implements AliService {
     }
 
     @Override
-    public String uploadImage(MultipartFile file){
-        System.out.println(file.getOriginalFilename());
+    public String uploadImage(MultipartFile file, String filename){
         try {
             InputStream inputStream=file.getInputStream();
-            String fileName = "image"+fileSeparator+file.getOriginalFilename();
+            String fileName = "image"+fileSeparator+filename;
             return this.uploadStreamToOss(inputStream,fileName);
         } catch (IOException e) {
             e.printStackTrace();

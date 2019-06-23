@@ -26,8 +26,9 @@ public interface UserDao extends JpaRepository<User,String> {
     int activeUser(@Param("id") String email,@Param("pass") String pass);
 
     @Modifying
-    @Query(value = "update User u set u.uid=:nickname where u.uid=:username")
-    void modifySignature(@Param("username") String username, @Param("nickname") String nickname);
+    @Query(value = "update User u set u.image=:url where u.uid=:id")
+    void updateImageUrl(@Param("id")String userID,@Param("url")String imageUrl);
+
 
     @Modifying
     @Query(value = "update User u set u.tags=:newTag where u.uid=:username")

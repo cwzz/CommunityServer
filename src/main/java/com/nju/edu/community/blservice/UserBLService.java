@@ -2,6 +2,7 @@ package com.nju.edu.community.blservice;
 
 import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.uservo.UserInfoVO;
+import org.springframework.web.multipart.MultipartFile;
 
 
 public interface UserBLService {
@@ -27,6 +28,6 @@ public interface UserBLService {
     ResultMessage modifyUserInfo(UserInfoVO userInfoVO);
 
     //修改用户头像
-
+    String modifyImage(String userID, MultipartFile file);
 
 }

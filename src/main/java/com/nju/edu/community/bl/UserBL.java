@@ -1,5 +1,6 @@
 package com.nju.edu.community.bl;
 
+import com.nju.edu.community.blservice.AliService;
 import com.nju.edu.community.blservice.UserBLService;
 import com.nju.edu.community.dao.UserDao;
 import com.nju.edu.community.entity.User;
@@ -10,6 +11,7 @@ import com.nju.edu.community.vo.uservo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
 
@@ -18,6 +20,8 @@ public class UserBL implements UserBLService {
 
     @Autowired
     private UserDao userDao;
+    @Autowired
+    private AliService aliService;
 
     @Value("${constant.codeLength}")
     private int codeLength;
@@ -117,7 +121,7 @@ public class UserBL implements UserBLService {
     }
 
     @Override
-    public ResultMessage modifyUserInfo(UserInfoVO userInfoVO){
+    public ResultMessage  modifyUserInfo(UserInfoVO userInfoVO){
         User user=userDao.findByEmail(userInfoVO.getEmail());
         if (user!=null){
             user.setNickname(userInfoVO.getNickname());
@@ -138,6 +142,20 @@ public class UserBL implements UserBLService {
             return ResultMessage.Success;
         }
         return ResultMessage.Fail;
+    }
+
+    @Override
+    @Transactional
+    public String modifyImage(String userID, MultipartFile file) {
+        try{
+            String imageUrl="https://"+ aliService.uploadImage(file, userID+file.getOriginalFilename());
+            userDao.updateImageUrl(userID, imageUrl);
+            return imageUrl;
+        }catch (Exception e){
+            e.printStackTrace();
+            return "FAIL";
+        }
+
     }
 
     private String generateCode(){
