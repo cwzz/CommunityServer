@@ -49,9 +49,11 @@ public class PostBL implements PostBLService {
         ArrayList<Post> posts=new ArrayList<>();
         if (category.equals("全部")&&tag.equals("全部")){
             posts=postDao.searchAllArticle();
-        }else if (category.equals("全部")){
-            posts=postDao.searchArticleByCategory(tag);
+        }else if (tag.equals("全部")){
+            System.out.println("分类是全部");
+            posts=postDao.searchArticleByCategory(category);
         }else {
+            System.out.println("都不是全部");
             postDao.searchArticleByTag(category, tag);
         }
         ArrayList<PostListItem> list=new ArrayList<>();
