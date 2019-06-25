@@ -125,6 +125,7 @@ public class AliServiceImpl implements AliService {
     }
 
     private String uploadStreamToOss(InputStream inputStream, String fileName) {
+        System.err.println(fileName);
         String ret = "";
         String url="";
         try {

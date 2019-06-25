@@ -42,7 +42,7 @@ public class PostController {
     public @ResponseBody
     String uploadPicture(@RequestBody UploadPicVO uploadPicVO) {
         System.err.println("yes");
-        System.err.println(uploadPicVO.getBase64()+","+uploadPicVO.getFilename()+","+uploadPicVO.getProjectID());
+        System.err.println(uploadPicVO.getFilename()+","+uploadPicVO.getProjectID());
         return aliService.uploadPicture(uploadPicVO.getProjectID(),uploadPicVO.getFilename(),uploadPicVO.getBase64());
     }
 
