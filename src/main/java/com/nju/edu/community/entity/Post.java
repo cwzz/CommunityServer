@@ -41,7 +41,7 @@ public class Post {
     public Post(String author){
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
         String currentTime=df.format(new Date());// new Date()为获取当前系统时间
-        this.pid =currentTime+author.substring(0,author.indexOf('@'));
+        this.pid =currentTime+"-"+author.substring(0,author.indexOf('@'));
         this.author=author;
         this.state=PostState.Draft;
     }

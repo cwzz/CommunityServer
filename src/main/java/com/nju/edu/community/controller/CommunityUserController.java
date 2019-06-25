@@ -34,6 +34,7 @@ public class CommunityUserController {
     @RequestMapping(value = "/judgeCollect", method = RequestMethod.POST)
     public @ResponseBody
     boolean judgeCollect(@RequestBody StarVO starVO){
+        System.err.println("----------------------------"+blService.judgeCollect(starVO.getCurrentUser(), starVO.getParam()));
         return blService.judgeCollect(starVO.getCurrentUser(), starVO.getParam());
     }
 
