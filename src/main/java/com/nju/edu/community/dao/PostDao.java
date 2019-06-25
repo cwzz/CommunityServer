@@ -13,7 +13,7 @@ import java.util.ArrayList;
 @Repository
 @Table(name = "post")
 public interface PostDao extends JpaRepository<Post,String> {
-    @Query("select p from Post p where p.author=:author and p.state='Published' order by p.publishTime desc ")
+    @Query("select p from Post p where p.author=:author and p.state=1 order by p.publishTime desc ")
     ArrayList<Post> getPostByAuthor(@Param("author") String author);
 
     @Query(value = "select p from Post p where p.title like %?1%")
