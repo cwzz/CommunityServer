@@ -21,7 +21,7 @@ public class UserController {
      */
     @RequestMapping(value = "/sendCode", method = RequestMethod.POST)
     public @ResponseBody
-    ResultMessage sendCode(@RequestBody EmailVO email){
+    ResultMessage sendCode(@RequestBody StringVO email){
         return userBLService.getCode(email.getEmail());
     }
 
@@ -46,7 +46,7 @@ public class UserController {
      * 忘记密码
      */
     @RequestMapping(value = "/forgetPass", method = RequestMethod.POST)
-    public @ResponseBody ResultMessage forgetPass(@RequestBody EmailVO email){
+    public @ResponseBody ResultMessage forgetPass(@RequestBody StringVO email){
         return userBLService.forgetPass(email.getEmail());
     }
 
@@ -54,7 +54,7 @@ public class UserController {
      * 获得用户头像
      */
     @RequestMapping(value = "/getImageUrl", method = RequestMethod.POST)
-    public @ResponseBody String resetPass(@RequestBody EmailVO email){
+    public @ResponseBody String resetPass(@RequestBody StringVO email){
         return userBLService.getImageUrl(email.getEmail());
     }
 
@@ -63,7 +63,7 @@ public class UserController {
      */
     @RequestMapping(value = "/getUserInfo", method = RequestMethod.POST)
     public @ResponseBody
-    UserInfoVO getUserInfo(@RequestBody EmailVO email){
+    UserInfoVO getUserInfo(@RequestBody StringVO email){
         return userBLService.getUserInfo(email.getEmail());
     }
 

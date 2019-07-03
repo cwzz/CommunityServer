@@ -6,6 +6,7 @@ import com.nju.edu.community.enums.ResultMessage;
 import com.nju.edu.community.vo.*;
 import com.nju.edu.community.vo.postvo.*;
 import com.nju.edu.community.vo.remarkvo.RemarkVO;
+import com.nju.edu.community.vo.uservo.StringVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -25,13 +26,18 @@ public class PostController {
     @Autowired
     private PostBLService postBLService;
 
+    @RequestMapping(value = "/searchPost")
+    public @ResponseBody
+    ArrayList<PostListItem> searchByKeywords(@RequestBody StringVO stringVO){
+        return postBLService.searchByKeywords(stringVO.getEmail());
+    }
+
     /**
      * 根据分类和标签查找文章
      */
     @PostMapping(value = "/getArticleList")
     public @ResponseBody
     ArrayList<PostListItem> getArticleList(@RequestBody SearchReq searchReq){
-        System.out.println(searchReq.toString());
         return postBLService.getArticleList(searchReq.getCategory(), searchReq.getLabel());
     }
 
@@ -41,8 +47,6 @@ public class PostController {
     @RequestMapping(value = "/changeBaseToUrl",method = RequestMethod.POST)
     public @ResponseBody
     String uploadPicture(@RequestBody UploadPicVO uploadPicVO) {
-        System.err.println("yes");
-        System.err.println(uploadPicVO.getFilename()+","+uploadPicVO.getProjectID());
         return aliService.uploadPicture(uploadPicVO.getProjectID(),uploadPicVO.getFilename(),uploadPicVO.getBase64());
     }
 

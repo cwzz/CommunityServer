@@ -4,7 +4,7 @@ import com.nju.edu.community.blservice.CommunityUserBLService;
 import com.nju.edu.community.entity.NameAndImage;
 import com.nju.edu.community.vo.StarVO;
 import com.nju.edu.community.vo.postvo.PostListItem;
-import com.nju.edu.community.vo.uservo.EmailVO;
+import com.nju.edu.community.vo.uservo.StringVO;
 import com.nju.edu.community.vo.uservo.UserInfoVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -24,8 +24,8 @@ public class CommunityUserController {
 
     @RequestMapping("/search")
     public @ResponseBody
-    List<UserInfoVO> searchByKeyword(String keyword){
-        return blService.searchByKeyword(keyword);
+    List<UserInfoVO> searchByKeyword(@RequestBody StringVO stringVO){
+        return blService.searchByKeyword(stringVO.getEmail());
     }
 
     /**
@@ -34,7 +34,6 @@ public class CommunityUserController {
     @RequestMapping(value = "/judgeCollect", method = RequestMethod.POST)
     public @ResponseBody
     boolean judgeCollect(@RequestBody StarVO starVO){
-        System.err.println("----------------------------"+blService.judgeCollect(starVO.getCurrentUser(), starVO.getParam()));
         return blService.judgeCollect(starVO.getCurrentUser(), starVO.getParam());
     }
 
@@ -88,8 +87,8 @@ public class CommunityUserController {
      */
     @RequestMapping(value = "/getMyRelease",method = RequestMethod.POST)
     public @ResponseBody
-    List<PostListItem> getMyReleasePost(@RequestBody EmailVO emailVO){
-        return blService.getReleased(emailVO.getEmail());
+    List<PostListItem> getMyReleasePost(@RequestBody StringVO stringVO){
+        return blService.getReleased(stringVO.getEmail());
     }
 
     /**
@@ -97,8 +96,8 @@ public class CommunityUserController {
      */
     @RequestMapping(value = "/getMyCollect", method = RequestMethod.POST)
     public @ResponseBody
-    List<PostListItem> getMyCollectPost(@RequestBody EmailVO emailVO){
-        return blService.getCollected(emailVO.getEmail());
+    List<PostListItem> getMyCollectPost(@RequestBody StringVO stringVO){
+        return blService.getCollected(stringVO.getEmail());
     }
 
     /**
@@ -106,8 +105,8 @@ public class CommunityUserController {
      */
     @RequestMapping(value = "/getMyStarUser", method = RequestMethod.POST)
     public @ResponseBody
-    List<NameAndImage> getInterestedUser(@RequestBody EmailVO emailVO){
-        return blService.getInterestedUser(emailVO.getEmail());
+    List<NameAndImage> getInterestedUser(@RequestBody StringVO stringVO){
+        return blService.getInterestedUser(stringVO.getEmail());
     }
 
     /**
@@ -115,8 +114,8 @@ public class CommunityUserController {
      */
     @RequestMapping(value = "/getMyFans", method = RequestMethod.POST)
     public @ResponseBody
-    List<NameAndImage> getMyFans(@RequestBody EmailVO emailVO){
-        return blService.getFans(emailVO.getEmail());
+    List<NameAndImage> getMyFans(@RequestBody StringVO stringVO){
+        return blService.getFans(stringVO.getEmail());
     }
 
 }

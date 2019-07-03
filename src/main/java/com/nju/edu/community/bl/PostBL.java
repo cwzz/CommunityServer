@@ -45,6 +45,16 @@ public class PostBL implements PostBLService {
     private MessageBLService messageBLService;
 
     @Override
+    public ArrayList<PostListItem> searchByKeywords(String keywords) {
+        ArrayList<Post> posts=postDao.searchArticleByKeywords(keywords);
+        ArrayList<PostListItem> result=new ArrayList<>();
+        for (Post post: posts){
+            result.add(new PostListItem(post, userBLService.getImageUrl(post.getAuthor())));
+        }
+        return result;
+    }
+
+    @Override
     public ArrayList<PostListItem> getArticleList(String category, String tag) {
         ArrayList<Post> posts=new ArrayList<>();
         if (category.equals("全部")&&tag.equals("全部")){
@@ -57,8 +67,10 @@ public class PostBL implements PostBLService {
             postDao.searchArticleByTag(category, tag);
         }
         ArrayList<PostListItem> list=new ArrayList<>();
+        String nickname;
         for (Post post: posts){
-            list.add(new PostListItem(post));
+            nickname=userBLService.getImageUrl(post.getAuthor());
+            list.add(new PostListItem(post, nickname));
         }
         return list;
     }

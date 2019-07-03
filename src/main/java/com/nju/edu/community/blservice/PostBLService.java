@@ -11,6 +11,8 @@ import java.util.ArrayList;
 
 
 public interface PostBLService {
+    ArrayList<PostListItem> searchByKeywords(String keywords);
+
     ArrayList<PostListItem> getArticleList(String category, String tag);
     ArrayList<PostListItem> getMyRelease(String email);
     ArrayList<PostListItem> getMyCollectPost(ArrayList<String> postIds);
