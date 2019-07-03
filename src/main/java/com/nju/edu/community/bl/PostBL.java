@@ -49,7 +49,7 @@ public class PostBL implements PostBLService {
         ArrayList<Post> posts=postDao.searchArticleByKeywords(keywords);
         ArrayList<PostListItem> result=new ArrayList<>();
         for (Post post: posts){
-            result.add(new PostListItem(post, userBLService.getImageUrl(post.getAuthor())));
+            result.add(new PostListItem(post, userBLService.getUserInfo(post.getAuthor()).getNickname()));
         }
         return result;
     }
@@ -69,7 +69,7 @@ public class PostBL implements PostBLService {
         ArrayList<PostListItem> list=new ArrayList<>();
         String nickname;
         for (Post post: posts){
-            nickname=userBLService.getImageUrl(post.getAuthor());
+            nickname=userBLService.getUserInfo(post.getAuthor()).getNickname();
             list.add(new PostListItem(post, nickname));
         }
         return list;
